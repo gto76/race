@@ -80,7 +80,7 @@ int main(void) {
 
 int movePlayer(PLAYER *p, int dir) {
 	if (DEBUG) printf("\033[%d;%dHMoving player %c\n", 4, 1, (*p).c);
-	//erasePlayer(*p);
+	erasePlayer(p);
 	switch (dir) {
 		case UP:
 			(*p).y--;
