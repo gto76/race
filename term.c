@@ -61,8 +61,13 @@ char const track[][81] = {
 int const DEBUG = 0;
 int const numOfPlayers = 1;
 
-struct player {
+struct position {
 	int x, y;
+};
+typedef struct position POSITION;
+
+struct player {
+	POSITION pos;
 	char c;
 	int dir[4]; // charcode of all directions
 };
@@ -101,8 +106,8 @@ int main(void) {
 	system("xset -r"); 
 
 	PLAYER p[numOfPlayers];
-	p[0].x = 10;
-	p[0].y = 10;
+	p[0].pos.x = 10;
+	p[0].pos.y = 10;
 	p[0].c = '1';
 	p[0].dir[0] = 65; // up
 	p[0].dir[1] = 66; // down
@@ -121,32 +126,45 @@ int main(void) {
 	return EXIT_SUCCESS;
 }	
 
-int movePlayer(PLAYER *p, int dir) {
-	if (DEBUG) printf("\033[%d;%dHMoving player %c\n", 4, 1, (*p).c);
-	erasePlayer(p);
+POSITION getNewPosition(POSITION pos, int dir) {
 	switch (dir) {
 		case UP:
-			(*p).y--;
+			pos.y--;
 			break;
 		case DOWN:
-			(*p).y++;
+			pos.y++;
 			break;
 		case RIGHT:
-			(*p).x++;
+			pos.x++;
 			break;
 		case LEFT:
-			(*p).x--;
+			pos.x--;
 			break;
 	}
-	printPlayer(p);
+	return pos;
+}
+
+int movePlayer(PLAYER *p, int dir) {
+	if (DEBUG) printf("\033[%d;%dHMoving player %c\n", 4, 1, (*p).c);
+
+	POSITION newPosition = getNewPosition((*p).pos, dir);
+	if (isPositionValid(newPosition)) {
+		erasePlayer(p);
+		(*p).pos = newPosition;
+		printPlayer(p);
+	}
+
+}
+int isPositionValid(POSITION pos) {
+	return track[pos.y][pos.x] == ' ';
 }
 
 int erasePlayer(PLAYER *p) {
-	printf("\033[%d;%dH%c\n", (*p).y, (*p).x, ' ');
+	printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, ' ');
 }
 
 int printPlayer(PLAYER *p) {
-	printf("\033[%d;%dH%c\n", (*p).y, (*p).x, (*p).c);
+	printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, (*p).c);
 }
 
 int clearScreen(void) {
