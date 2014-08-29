@@ -1,1 +1,1 @@
-gcc term.c && ./a.out
+gcc term.c noncanonical.c && ./a.out
