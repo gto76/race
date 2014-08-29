@@ -1,12 +1,15 @@
-#include<stdio.h>
-#include<termios.h>
-#include<unistd.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <termios.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <signal.h>
 
 struct termios saved_attributes;
 
 void reset_input_mode() {
 	tcsetattr(STDIN_FILENO, TCSANOW, &saved_attributes);
+	system("xset r");
+	system("clear");
 }
 
 void set_input_mode(void) {
@@ -51,9 +54,21 @@ int checkMove(char c, PLAYER (*p)[]) {
 }
 enum direction {UP, DOWN, RIGHT, LEFT};
 
+void term(int signum) {
+	exit(0);
+}
+
 int main(void) {
-	clearScreen();
 	set_input_mode();
+	clearScreen();
+
+	// catch sigterm
+	struct sigaction action;
+    action.sa_handler = term;
+    sigaction(SIGINT, &action, NULL);
+
+	// disable repeat
+	system("xset -r"); 
 
 	PLAYER p[numOfPlayers];
 	p[0].x = 10;
@@ -67,14 +82,10 @@ int main(void) {
 	char c;
 	while(1) {
 		c = getc(stdin);
-		if (c == '\004') {
-			break;
-		} else {
-			checkMove(c, &p);
-			printPlayer(&p[0]); 
-		}
+		checkMove(c, &p);
+		printPlayer(&p[0]); 
 	}
-	clearScreen();
+
 	return EXIT_SUCCESS;
 }	
 
