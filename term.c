@@ -59,8 +59,7 @@ char const track[][81] = {
 };
 
 
-int const numOfPlayers = 1;
-
+int const numOfPlayers = 2;
 
 int main(void) {
 	// set terminal in noncanonical mode
@@ -76,25 +75,40 @@ int main(void) {
 	system("xset -r"); 
 
 	PLAYER p[numOfPlayers];
-	p[0].pos.x = 10;
-	p[0].pos.y = 10;
+	p[0].pos.x = 40;
+	p[0].pos.y = 17;
 	p[0].c = '1';
 	p[0].dir[0] = 65; // up
 	p[0].dir[1] = 66; // down
 	p[0].dir[2] = 67; // right
 	p[0].dir[3] = 68; // left
 
+	p[1].pos.x = 40;
+	p[1].pos.y = 20;
+	p[1].c = '2';
+	p[1].dir[0] = 119; // up - w
+	p[1].dir[1] = 115; // down - s
+	p[1].dir[2] = 100; // right - d
+	p[1].dir[3] = 97; // left - a
+
 	printf("%s", track);
+	printAllPlayers(&p);
 
 	char c;
 	while(1) {
 		c = getc(stdin);
 		checkMove(c, &p);
-		printPlayer(&p[0]); 
 	}
 
 	return EXIT_SUCCESS;
 }	
+
+int printAllPlayers(PLAYER (*p)[]) {
+	int i;
+	for (i = 0; i < numOfPlayers; i++) {
+		printPlayer(&((*p)[i])); 
+	}
+}
 
 int checkMove(char c, PLAYER (*p)[]) {
 	int i, j;
