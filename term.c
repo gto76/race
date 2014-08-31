@@ -28,7 +28,7 @@ int clearScreen(void);
 int printPlayer(PLAYER *p);
 int erasePlayer(PLAYER *p);
 int isPositionValid(POSITION pos);
-int movePlayer(PLAYER *p, int dir);
+int movePlayer(PLAYER (*p)[], int i, int dir);
 POSITION getNewPosition(POSITION pos, int dir);
 
 char const track[][81] = {
@@ -48,13 +48,13 @@ char const track[][81] = {
 "#                  ##   ###                          ###   ##                  #\n",
 "#                  ##########################################                  #\n",
 "#                  ##########################################                  #\n",
-"#                                                                              #\n",
-"#                                                                              #\n",
-"#                                                                              #\n",
-"#                                                                              #\n",
-"#                                                                              #\n",
-"#                                                                              #\n",
-"#                                                                              #\n",
+"#                                      |                                       #\n",
+"#                                      |                                       #\n",
+"#                                      |                                       #\n",
+"#                                      |                                       #\n",
+"#                                      |                                       #\n",
+"#                                      |                                       #\n",
+"#                                      |                                       #\n",
 "################################################################################",
 };
 
@@ -115,19 +115,19 @@ int checkMove(char c, PLAYER (*p)[]) {
 	for (i = 0; i < numOfPlayers; i++) {
 		for (j = 0; j < 4; j++) {
 			if ((*p)[i].dir[j] == c) {
-				movePlayer(&p, i, j);
+				movePlayer(p, i, j);
 				return 0;
 			}
 		}
 	}
 }
 
-int movePlayer(PLAYER (*p)[], int playersIndex, int direction) { //PLAYER *p, int dir) {
+int movePlayer(PLAYER (*p)[], int i, int dir) { //PLAYER *p, int dir) {
 		//		movePlayer(&((*p)[i]), j);
 	POSITION newPosition = getNewPosition((*p)[i].pos, dir);
 	if (isPositionValid(newPosition)) {
 		erasePlayer(&((*p)[i])); //p
-		(*p).pos = newPosition;
+		(*p)[i].pos = newPosition;
 		printPlayer(&((*p)[i])); //p
 	}
 }
