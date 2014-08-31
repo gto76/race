@@ -76,7 +76,7 @@ int main(void) {
 
 	PLAYER p[numOfPlayers];
 	p[0].pos.x = 40;
-	p[0].pos.y = 17;
+	p[0].pos.y = 18;
 	p[0].c = '1';
 	p[0].dir[0] = 65; // up
 	p[0].dir[1] = 66; // down
@@ -128,7 +128,7 @@ int movePlayer(PLAYER (*p)[], int i, int dir) { //PLAYER *p, int dir) {
 	if (isPositionValid(newPosition)) {
 		erasePlayer(&((*p)[i])); //p
 		(*p)[i].pos = newPosition;
-		printPlayer(&((*p)[i])); //p
+		printAllPlayers(p); // so that if two are on the same spot both get printed
 	}
 }
 
