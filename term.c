@@ -99,15 +99,35 @@ int main(void) {
 		printf("%s", track);
 		printAllPlayers(&ppp);
 
+		countdown();
 		char c;
 		while(!areAllFinished(&ppp)) { // inner game loop
 			c = getc(stdin);
 			checkMove(c, &ppp);
 		}
 	}
-
 	return EXIT_SUCCESS;
 }	
+
+int countdown() {
+	int x = 40, y = 10;
+	printCharXY('3', x, y);
+	sleep(1);
+	printCharXY('2', x, y);
+	sleep(1);
+	printCharXY('1', x, y);
+	sleep(1);
+
+	// clear input buffer
+	int const COUNTDOWN_BUFFER = 120; 
+	char buf[COUNTDOWN_BUFFER * 3]; // you need 3 chars to clear one keystroke
+	size_t nbytes;
+	nbytes = sizeof(buf);
+	read(0, buf, nbytes);
+
+	printCharXY('GO, GO, GO!!!!!', x, y);
+}
+
 
 int areAllFinished(PLAYER (*ppp)[]) {
 	int i;
@@ -204,6 +224,10 @@ int printPlayer(PLAYER *p) {
 
 int printChar(int c, POSITION pos) {
 	printf("\033[%d;%dH%c\n", pos.y+1, pos.x+1, c);
+}
+
+int printCharXY(int c, int x, int y) {
+	printf("\033[%d;%dH%c\n", y+1, x+1, c);  	
 }
 
 int clearScreen(void) {

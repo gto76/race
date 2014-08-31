@@ -22,7 +22,7 @@ void set_input_mode(void) {
 	atexit(reset_input_mode);
 	tcgetattr(STDIN_FILENO, &tattr);
 	tattr.c_lflag &= ~(ICANON|ECHO);
-	tattr.c_cc[VMIN] = 1;
-	tattr.c_cc[VTIME] = 0;
+	tattr.c_cc[VMIN] = 1; //1
+	tattr.c_cc[VTIME] = 0; //0
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &tattr);
 }
