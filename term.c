@@ -75,32 +75,35 @@ int main(void) {
 	// disable repeat
 	system("xset -r"); 
 
-	PLAYER ppp[numOfPlayers];
-	ppp[0].pos.x = 30; // 40
-	ppp[0].pos.y = 18;
-	ppp[0].c = '1';
-	ppp[0].dir[0] = 65; // up
-	ppp[0].dir[1] = 66; // down
-	ppp[0].dir[2] = 67; // right
-	ppp[0].dir[3] = 68; // left
-	ppp[0].finished = 0; 
+	while(1) { // outer game loop (menu -> game...)
+		PLAYER ppp[numOfPlayers];
+		ppp[0].pos.x = 30; // 40
+		ppp[0].pos.y = 18;
+		ppp[0].c = '1';
+		ppp[0].dir[0] = 65; // up
+		ppp[0].dir[1] = 66; // down
+		ppp[0].dir[2] = 67; // right
+		ppp[0].dir[3] = 68; // left
+		ppp[0].finished = 0; 
 
-	ppp[1].pos.x = 30;
-	ppp[1].pos.y = 20;
-	ppp[1].c = '2';
-	ppp[1].dir[0] = 119; // up - w
-	ppp[1].dir[1] = 115; // down - s
-	ppp[1].dir[2] = 100; // right - d
-	ppp[1].dir[3] = 97; // left - a
-	ppp[1].finished = 0; 
+		ppp[1].pos.x = 30;
+		ppp[1].pos.y = 20;
+		ppp[1].c = '2';
+		ppp[1].dir[0] = 119; // up - w
+		ppp[1].dir[1] = 115; // down - s
+		ppp[1].dir[2] = 100; // right - d
+		ppp[1].dir[3] = 97; // left - a
+		ppp[1].finished = 0; 
 
-	printf("%s", track);
-	printAllPlayers(&ppp);
+		clearScreen();
+		printf("%s", track);
+		printAllPlayers(&ppp);
 
-	char c;
-	while(!areAllFinished(&ppp)) {
-		c = getc(stdin);
-		checkMove(c, &ppp);
+		char c;
+		while(!areAllFinished(&ppp)) { // inner game loop
+			c = getc(stdin);
+			checkMove(c, &ppp);
+		}
 	}
 
 	return EXIT_SUCCESS;
