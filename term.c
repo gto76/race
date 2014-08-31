@@ -27,7 +27,7 @@ int main(void);
 int clearScreen(void);
 int printPlayer(PLAYER *p);
 int erasePlayer(PLAYER *p);
-int isPositionValid(POSITION pos);
+int isPositionValid(POSITION pos, int dir);
 int movePlayer(PLAYER (*p)[], int i, int dir);
 POSITION getNewPosition(POSITION pos, int dir);
 
@@ -125,11 +125,19 @@ int checkMove(char c, PLAYER (*p)[]) {
 int movePlayer(PLAYER (*p)[], int i, int dir) { //PLAYER *p, int dir) {
 		//		movePlayer(&((*p)[i]), j);
 	POSITION newPosition = getNewPosition((*p)[i].pos, dir);
-	if (isPositionValid(newPosition)) {
+	if (isPositionValid(newPosition, dir)) {
+		int symbol = getSymbolOnTheTrack((*p)[i].pos);
 		erasePlayer(&((*p)[i])); //p
+		if (symbol == '|') { // if player was on the finish line, draw finish line
+			printChar('|', (*p)[i].pos);
+		}
 		(*p)[i].pos = newPosition;
-		printAllPlayers(p); // so that if two are on the same spot both get printed
+		printAllPlayers(p); // so that if two were on the same spot both get printed
+		printPlayer(&((*p)[i])); // so that it if two are on the same spot the last thet arrived gets printed
 	}
+}
+int getSymbolOnTheTrack(POSITION pos) {
+	return track[pos.y][pos.x];
 }
 
 POSITION getNewPosition(POSITION pos, int dir) {
@@ -150,8 +158,14 @@ POSITION getNewPosition(POSITION pos, int dir) {
 	return pos;
 }
 
-int isPositionValid(POSITION pos) {
-	return track[pos.y][pos.x] == ' ';
+int isPositionValid(POSITION pos, int dir) {
+	if (track[pos.y][pos.x] == ' ') {
+		return 1;
+	}
+	if (track[pos.y][pos.x] == '|' && dir == RIGHT) {
+		return 1;
+	}
+	return 0;
 }
 
 int erasePlayer(PLAYER *p) {
@@ -160,6 +174,10 @@ int erasePlayer(PLAYER *p) {
 
 int printPlayer(PLAYER *p) {
 	printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, (*p).c);
+}
+
+int printChar(int c, POSITION pos) {
+	printf("\033[%d;%dH%c\n", pos.y+1, pos.x+1, c);
 }
 
 int clearScreen(void) {
