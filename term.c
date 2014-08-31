@@ -17,6 +17,7 @@ struct player {
 	POSITION pos;
 	char c;
 	int dir[4]; // charcode of all directions
+	int finished;
 };
 typedef struct player PLAYER;
 
@@ -74,68 +75,90 @@ int main(void) {
 	// disable repeat
 	system("xset -r"); 
 
-	PLAYER p[numOfPlayers];
-	p[0].pos.x = 40;
-	p[0].pos.y = 18;
-	p[0].c = '1';
-	p[0].dir[0] = 65; // up
-	p[0].dir[1] = 66; // down
-	p[0].dir[2] = 67; // right
-	p[0].dir[3] = 68; // left
+	PLAYER ppp[numOfPlayers];
+	ppp[0].pos.x = 30; // 40
+	ppp[0].pos.y = 18;
+	ppp[0].c = '1';
+	ppp[0].dir[0] = 65; // up
+	ppp[0].dir[1] = 66; // down
+	ppp[0].dir[2] = 67; // right
+	ppp[0].dir[3] = 68; // left
+	ppp[0].finished = 0; 
 
-	p[1].pos.x = 40;
-	p[1].pos.y = 20;
-	p[1].c = '2';
-	p[1].dir[0] = 119; // up - w
-	p[1].dir[1] = 115; // down - s
-	p[1].dir[2] = 100; // right - d
-	p[1].dir[3] = 97; // left - a
+	ppp[1].pos.x = 30;
+	ppp[1].pos.y = 20;
+	ppp[1].c = '2';
+	ppp[1].dir[0] = 119; // up - w
+	ppp[1].dir[1] = 115; // down - s
+	ppp[1].dir[2] = 100; // right - d
+	ppp[1].dir[3] = 97; // left - a
+	ppp[1].finished = 0; 
 
 	printf("%s", track);
-	printAllPlayers(&p);
+	printAllPlayers(&ppp);
 
 	char c;
-	while(1) {
+	while(!areAllFinished(&ppp)) {
 		c = getc(stdin);
-		checkMove(c, &p);
+		checkMove(c, &ppp);
 	}
 
 	return EXIT_SUCCESS;
 }	
 
-int printAllPlayers(PLAYER (*p)[]) {
+int areAllFinished(PLAYER (*ppp)[]) {
 	int i;
 	for (i = 0; i < numOfPlayers; i++) {
-		printPlayer(&((*p)[i])); 
+		if (((*ppp)[i]).finished == 0) {
+			return 0;
+		}
+	}
+	return 1;
+}
+
+int printAllPlayers(PLAYER (*ppp)[]) {
+	int i;
+	for (i = 0; i < numOfPlayers; i++) {
+		printPlayer(&((*ppp)[i])); 
 	}
 }
 
-int checkMove(char c, PLAYER (*p)[]) {
+int checkMove(char c, PLAYER (*ppp)[]) {
 	int i, j;
 	for (i = 0; i < numOfPlayers; i++) {
 		for (j = 0; j < 4; j++) {
-			if ((*p)[i].dir[j] == c) {
-				movePlayer(p, i, j);
+			if ((*ppp)[i].dir[j] == c) {
+				movePlayer(ppp, i, j);
 				return 0;
 			}
 		}
 	}
 }
 
-int movePlayer(PLAYER (*p)[], int i, int dir) { //PLAYER *p, int dir) {
+int movePlayer(PLAYER (*ppp)[], int i, int dir) { //PLAYER *p, int dir) {
 		//		movePlayer(&((*p)[i]), j);
-	POSITION newPosition = getNewPosition((*p)[i].pos, dir);
+	PLAYER *p = &(*ppp)[i];
+	POSITION oldPosition = (*p).pos;
+	POSITION newPosition = getNewPosition(oldPosition, dir);
 	if (isPositionValid(newPosition, dir)) {
-		int symbol = getSymbolOnTheTrack((*p)[i].pos);
-		erasePlayer(&((*p)[i])); //p
+		int symbol = getSymbolOnTheTrack(oldPosition);
+		erasePlayer(p); //p
 		if (symbol == '|') { // if player was on the finish line, draw finish line
-			printChar('|', (*p)[i].pos);
+			printChar('|', oldPosition);
 		}
-		(*p)[i].pos = newPosition;
-		printAllPlayers(p); // so that if two were on the same spot both get printed
-		printPlayer(&((*p)[i])); // so that it if two are on the same spot the last thet arrived gets printed
+		if (crossedTheLine(oldPosition, dir)) { // if player crossed the line, finished flag is set to true
+			(*p).finished = 1;
+		}
+		(*p).pos = newPosition;
+		printAllPlayers(ppp); // so that if two were on the same spot both get printed
+		printPlayer(p); // so that it if two are on the same spot the last thet arrived gets printed
 	}
 }
+
+int crossedTheLine(POSITION pos, int dir) {
+	return getSymbolOnTheTrack(pos) == '|' && dir == RIGHT;
+}
+
 int getSymbolOnTheTrack(POSITION pos) {
 	return track[pos.y][pos.x];
 }
