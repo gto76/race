@@ -115,19 +115,20 @@ int checkMove(char c, PLAYER (*p)[]) {
 	for (i = 0; i < numOfPlayers; i++) {
 		for (j = 0; j < 4; j++) {
 			if ((*p)[i].dir[j] == c) {
-				movePlayer(&((*p)[i]), j);
+				movePlayer(&p, i, j);
 				return 0;
 			}
 		}
 	}
 }
 
-int movePlayer(PLAYER *p, int dir) {
-	POSITION newPosition = getNewPosition((*p).pos, dir);
+int movePlayer(PLAYER (*p)[], int playersIndex, int direction) { //PLAYER *p, int dir) {
+		//		movePlayer(&((*p)[i]), j);
+	POSITION newPosition = getNewPosition((*p)[i].pos, dir);
 	if (isPositionValid(newPosition)) {
-		erasePlayer(p);
+		erasePlayer(&((*p)[i])); //p
 		(*p).pos = newPosition;
-		printPlayer(p);
+		printPlayer(&((*p)[i])); //p
 	}
 }
 
