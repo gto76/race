@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
 #include <time.h>
 
-#include "noncanonical.h"
+#include "environment.h"
 #include "graphics.h"
 
 int const DEBUG = 0;
@@ -46,21 +45,7 @@ int setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, in
 int const numOfPlayers = 2;
 
 int main(void) {
-	// set terminal in noncanonical mode
-	set_input_mode();
-	clearScreen();
-
-	// catch sigterm
-	struct sigaction action;
-	action.sa_handler = term;
-	sigaction(SIGINT, &action, NULL);
-
-	// disable repeat
-	system("xset -r"); 
-
-	// set cursor off. could also probably use system("setterm -cursor off);
-	printf("\e[?25l");
-	fflush(stdout);
+	setEnvironment();
 
 	while(1) { // outer game loop (menu -> game...)
 		char c;
@@ -289,9 +274,4 @@ int clearScreen(void) {
 	printf("\e[1;1H\e[2J");
 }
 
-// method that gets executed when ctrl-c is pressed.
-// necesary so that at_exit method gets executed,
-// that sets terminal back to the original state.
-void term(int signum) {
-	exit(0);
-}
+
