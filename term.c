@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <time.h>
 
 #include "noncanonical.h"
 #include "graphics.h"
@@ -14,11 +15,19 @@ struct position {
 };
 typedef struct position POSITION;
 
+struct move {
+	int dir;
+	clock_t time;
+};
+typedef struct move MOVE;
+
 struct player {
 	POSITION pos;
 	char c;
 	int dir[4]; // charcode of all directions
 	int finished;
+	MOVE mmm[1000];
+	int lastMove;
 };
 typedef struct player PLAYER;
 
@@ -53,6 +62,7 @@ int main(void) {
 	fflush(stdout);
 
 	while(1) { // outer game loop (menu -> game...)
+		char c;
 		PLAYER ppp[numOfPlayers];
 		ppp[0].pos.x = 30; // 40
 		ppp[0].pos.y = 18;
@@ -62,6 +72,7 @@ int main(void) {
 		ppp[0].dir[2] = 67; // right
 		ppp[0].dir[3] = 68; // left
 		ppp[0].finished = 0; 
+		ppp[0].lastMove = 0; 
 
 		ppp[1].pos.x = 30;
 		ppp[1].pos.y = 20;
@@ -71,20 +82,50 @@ int main(void) {
 		ppp[1].dir[2] = 100; // right - d
 		ppp[1].dir[3] = 97; // left - a
 		ppp[1].finished = 0; 
+		ppp[1].lastMove = 0; 
 
 		clearScreen();
 		printf("%s", track);
 		printAllPlayers(&ppp);
-
 		countdown();
-		char c;
+		setStartTime(&ppp);
 		while(!areAllFinished(&ppp)) { // inner game loop
 			c = getc(stdin);
 			checkMove(c, &ppp);
 		}
+		results(&ppp);
 	}
 	return EXIT_SUCCESS;
 }	
+
+int setStartTime(PLAYER (*ppp)[]) {
+	int i;
+	MOVE m;
+	m.dir = 0;
+	m.time = clock();
+	for (i = 0; i < numOfPlayers; i++) {
+		((*ppp)[i]).mmm[0] = m;
+		((*ppp)[i]).lastMove++;
+	}
+}
+
+int results(PLAYER (*ppp)[]) {
+	int i;
+	for (i = 0; i < numOfPlayers; i++) {
+		clock_t start = ((*ppp)[i]).mmm[0].time;
+		clock_t end = ((*ppp)[i]).mmm[((*ppp)[i]).lastMove-1].time;
+		double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+		printf("\033[%d;%dHPlayer %d: %d %d %f\n", 20+i, 10, i, start, end, cpu_time_used);  	
+	}
+	sleep(10);
+//clock_t start, end;
+//double cpu_time_used;
+//start = clock();
+//... /* Do the work. */
+//end = clock();
+//cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+}
 
 int countdown() {
 	int sec = 1;
@@ -137,24 +178,38 @@ int checkMove(char c, PLAYER (*ppp)[]) {
 	}
 }
 
-int movePlayer(PLAYER (*ppp)[], int i, int dir) { //PLAYER *p, int dir) {
-		//		movePlayer(&((*p)[i]), j);
+int movePlayer(PLAYER (*ppp)[], int i, int dir) {
 	PLAYER *p = &(*ppp)[i];
 	POSITION oldPosition = (*p).pos;
 	POSITION newPosition = getNewPosition(oldPosition, dir);
 	if (isPositionValid(newPosition, dir)) {
-		int symbol = getSymbolOnTheTrack(oldPosition);
-		erasePlayer(p); //p
-		if (symbol == '|') { // if player was on the finish line, draw finish line
-			printChar('|', oldPosition);
+		// save move if not yet finished:
+		if ((*p).finished != 1) {
+			saveMove(p, dir);
 		}
-		if (crossedTheLine(oldPosition, dir)) { // if player crossed the line, finished flag is set to true
+		// if player crossed the line, finished flag is set to true:
+		if (crossedTheLine(oldPosition, dir)) {
 			(*p).finished = 1;
 		}
+		int symbol = getSymbolOnTheTrack(oldPosition);
+		erasePlayer(p); 
+		// if player was on the finish line, draw finish line:
+		if (symbol == '|') { 
+			printChar('|', oldPosition);
+		}
 		(*p).pos = newPosition;
-		printAllPlayers(ppp); // so that if two were on the same spot both get printed
-		printPlayer(p); // so that it if two are on the same spot the last thet arrived gets printed
+		// so that if two were on the same spot both get printed:
+		printAllPlayers(ppp);
+		// so that it if two are on the same spot the last thet arrived gets printed:
+		printPlayer(p); 
 	}
+}
+
+int saveMove(PLAYER *p, int dir) {
+	MOVE m;
+	m.dir = dir;
+	m.time = clock();
+	(*p).mmm[(*p).lastMove++] = m;
 }
 
 int crossedTheLine(POSITION pos, int dir) {
