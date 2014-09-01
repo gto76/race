@@ -23,6 +23,7 @@ void set_input_mode(void) {
 		printf("Not a terminal: %d.\n", STDIN_FILENO);
 		exit(EXIT_FAILURE);
 	}
+	// set noncanonical mode and disable echo
 	tcgetattr(STDIN_FILENO, &saved_attributes);
 	atexit(reset_input_mode);
 	tcgetattr(STDIN_FILENO, &tattr);
@@ -30,4 +31,5 @@ void set_input_mode(void) {
 	tattr.c_cc[VMIN] = 0; //1
 	tattr.c_cc[VTIME] = 1; //0
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &tattr);
+	//
 }

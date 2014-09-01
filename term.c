@@ -41,6 +41,7 @@ int erasePlayer(PLAYER *p);
 int isPositionValid(POSITION pos, int dir);
 int movePlayer(PLAYER (*p)[], int i, int dir);
 POSITION getNewPosition(POSITION pos, int dir);
+int setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left);
 
 int const numOfPlayers = 2;
 
@@ -64,25 +65,9 @@ int main(void) {
 	while(1) { // outer game loop (menu -> game...)
 		char c;
 		PLAYER ppp[numOfPlayers];
-		ppp[0].pos.x = 30; // 40
-		ppp[0].pos.y = 18;
-		ppp[0].c = '1';
-		ppp[0].dir[0] = 65; // up
-		ppp[0].dir[1] = 66; // down
-		ppp[0].dir[2] = 67; // right
-		ppp[0].dir[3] = 68; // left
-		ppp[0].finished = 0; 
-		ppp[0].lastMove = 0; 
 
-		ppp[1].pos.x = 30;
-		ppp[1].pos.y = 20;
-		ppp[1].c = '2';
-		ppp[1].dir[0] = 119; // up - w
-		ppp[1].dir[1] = 115; // down - s
-		ppp[1].dir[2] = 100; // right - d
-		ppp[1].dir[3] = 97; // left - a
-		ppp[1].finished = 0; 
-		ppp[1].lastMove = 0; 
+		setPlayer(&ppp, 0, 30, 18, '1', 65, 66, 67, 68);
+		setPlayer(&ppp, 1, 30, 20, '2', 119, 115, 100, 97);
 
 		clearScreen();
 		printf("%s", track);
@@ -97,6 +82,19 @@ int main(void) {
 	}
 	return EXIT_SUCCESS;
 }	
+
+int setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left) {
+	PLAYER *p = &((*ppp)[i]);
+	(*p).pos.x = x;
+	(*p).pos.y = y;
+	(*p).c = c;
+	(*p).dir[0] = up; 
+	(*p).dir[1] = down;
+	(*p).dir[2] = right;
+	(*p).dir[3] = left;
+	(*p).finished = 0; 
+	(*p).lastMove = 0; 
+}
 
 int setStartTime(PLAYER (*ppp)[]) {
 	int i;
@@ -124,8 +122,9 @@ int results(PLAYER (*ppp)[]) {
 //... /* Do the work. */
 //end = clock();
 //cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-
 }
+
+
 
 int countdown() {
 	int sec = 1;
@@ -157,13 +156,6 @@ int areAllFinished(PLAYER (*ppp)[]) {
 		}
 	}
 	return 1;
-}
-
-int printAllPlayers(PLAYER (*ppp)[]) {
-	int i;
-	for (i = 0; i < numOfPlayers; i++) {
-		printPlayer(&((*ppp)[i])); 
-	}
 }
 
 int checkMove(char c, PLAYER (*ppp)[]) {
@@ -248,12 +240,23 @@ int isPositionValid(POSITION pos, int dir) {
 	return 0;
 }
 
-int erasePlayer(PLAYER *p) {
-	printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, ' ');
+	  ///////////////
+	 //// print ////
+	///////////////
+
+int printAllPlayers(PLAYER (*ppp)[]) {
+	int i;
+	for (i = 0; i < numOfPlayers; i++) {
+		printPlayer(&((*ppp)[i])); 
+	}
 }
 
 int printPlayer(PLAYER *p) {
 	printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, (*p).c);
+}
+
+int erasePlayer(PLAYER *p) {
+	printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, ' ');
 }
 
 int printChar(int c, POSITION pos) {
