@@ -5,7 +5,7 @@
 #include "environment.h"
 #include "graphics.h"
 
-int const DEBUG = 0;
+////////////////////////////
 
 enum direction {UP, DOWN, RIGHT, LEFT};
 
@@ -30,6 +30,8 @@ struct player {
 };
 typedef struct player PLAYER;
 
+////////////////////////////
+
 int checkMove(char c, PLAYER (*p)[]);
 int checkMove(char c, PLAYER (*p)[]);
 void term(int signum);
@@ -42,12 +44,18 @@ int movePlayer(PLAYER (*p)[], int i, int dir);
 POSITION getNewPosition(POSITION pos, int dir);
 int setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left);
 
+////////////////////////////
+
+int const DEBUG = 0;
 int const numOfPlayers = 2;
+
+////////////////////////////
 
 int main(void) {
 	setEnvironment();
 
 	while(1) { // outer game loop (menu -> game...)
+		setRaceMode();
 		char c;
 		PLAYER ppp[numOfPlayers];
 
@@ -67,6 +75,8 @@ int main(void) {
 	}
 	return EXIT_SUCCESS;
 }	
+
+////////////////////////////
 
 int setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left) {
 	PLAYER *p = &((*ppp)[i]);
@@ -95,21 +105,17 @@ int setStartTime(PLAYER (*ppp)[]) {
 int results(PLAYER (*ppp)[]) {
 	int i;
 	for (i = 0; i < numOfPlayers; i++) {
-		clock_t start = ((*ppp)[i]).mmm[0].time;
-		clock_t end = ((*ppp)[i]).mmm[((*ppp)[i]).lastMove-1].time;
+		PLAYER *p = &((*ppp)[i]);
+		clock_t start = (*p).mmm[0].time;
+		clock_t end = (*p).mmm[(*p).lastMove-1].time;
 		double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-		printf("\033[%d;%dHPlayer %d: %d %d %f\n", 20+i, 10, i, start, end, cpu_time_used);  	
+		printf("\033[%d;%dH%c: %f\n", 10+i, 30, (*p).c, cpu_time_used);  	
 	}
-	sleep(10);
-//clock_t start, end;
-//double cpu_time_used;
-//start = clock();
-//... /* Do the work. */
-//end = clock();
-//cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+	sleep(2);
+	clearInputBuffer();
+	setMenuMode();
+    getc(stdin);
 }
-
-
 
 int countdown() {
 	int sec = 1;
