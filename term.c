@@ -3,6 +3,7 @@
 #include <signal.h>
 
 #include "noncanonical.h"
+#include "graphics.h"
 
 int const DEBUG = 0;
 
@@ -32,34 +33,6 @@ int isPositionValid(POSITION pos, int dir);
 int movePlayer(PLAYER (*p)[], int i, int dir);
 POSITION getNewPosition(POSITION pos, int dir);
 
-char const track[][81] = {
-"################################################################################\n",
-"#                                                                              #\n",
-"#                                                                              #\n",
-"#                                                                              #\n",
-"#                                                                              #\n",
-"#                                                                              #\n",
-"#                                                                              #\n",
-"#                                                                              #\n",
-"#                  ##########################################                  #\n",
-"#                  ##########################################                  #\n",
-"#                  ########                          ########                  #\n",
-"#                  ##   ###                          ###   ##                  #\n",
-"#                  ##   ###                          ###   ##                  #\n",
-"#                  ##   ###                          ###   ##                  #\n",
-"#                  ##########################################                  #\n",
-"#                  ##########################################                  #\n",
-"#                                      |                                       #\n",
-"#                                      |                                       #\n",
-"#                                      |                                       #\n",
-"#                                      |                                       #\n",
-"#                                      |                                       #\n",
-"#                                      |                                       #\n",
-"#                                      |                                       #\n",
-"################################################################################",
-};
-
-
 int const numOfPlayers = 2;
 
 int main(void) {
@@ -74,6 +47,10 @@ int main(void) {
 
 	// disable repeat
 	system("xset -r"); 
+
+	// set cursor off. could also probably use system("setterm -cursor off);
+	printf("\e[?25l");
+	fflush(stdout);
 
 	while(1) { // outer game loop (menu -> game...)
 		PLAYER ppp[numOfPlayers];
@@ -110,24 +87,26 @@ int main(void) {
 }	
 
 int countdown() {
-	int x = 40, y = 10;
-	printCharXY('3', x, y);
-	sleep(1);
-	printCharXY('2', x, y);
-	sleep(1);
-	printCharXY('1', x, y);
-	sleep(1);
+	int sec = 1;
+	int x = 36, y = 9;
 
-	// clear input buffer
+	printMatrixXY(three, x, y, 5);
+	sleep(sec);
+	printMatrixXY(two, x, y, 5);
+	sleep(sec);
+	printMatrixXY(one, x, y, 5);
+	sleep(sec);
+	clearInputBuffer();
+	printMatrixXYgo(go, 29, y, 5);
+}
+
+int clearInputBuffer() {
 	int const COUNTDOWN_BUFFER = 120; 
 	char buf[COUNTDOWN_BUFFER * 3]; // you need 3 chars to clear one keystroke
 	size_t nbytes;
 	nbytes = sizeof(buf);
 	read(0, buf, nbytes);
-
-	printCharXY('GO, GO, GO!!!!!', x, y);
 }
-
 
 int areAllFinished(PLAYER (*ppp)[]) {
 	int i;
@@ -230,11 +209,31 @@ int printCharXY(int c, int x, int y) {
 	printf("\033[%d;%dH%c\n", y+1, x+1, c);  	
 }
 
+int printStringXY(int s[], int x, int y) {
+	printf("\033[%d;%dH%s\n", y+1, x+1, s);  	
+}
+
+int printMatrixXY(char m[][8], int x, int y, int size) {
+	int i;
+	for (i = 0; i < size; i++) {
+		printStringXY(m[i], x, y+i);
+	}
+}
+
+int printMatrixXYgo(char m[][22], int x, int y, int size) {
+	int i;
+	for (i = 0; i < size; i++) {
+		printStringXY(m[i], x, y+i);
+	}
+}
+
 int clearScreen(void) {
 	printf("\e[1;1H\e[2J");
 }
 
-// method that gets executed when ctrl-c is pressed
+// method that gets executed when ctrl-c is pressed.
+// necesary so that at_exit method gets executed,
+// that sets terminal back to the original state.
 void term(int signum) {
 	exit(0);
 }
