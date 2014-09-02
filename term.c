@@ -26,7 +26,7 @@ typedef struct move MOVE;
 struct player {
 	POSITION pos;
 	char c;
-	int dir[4]; // charcode of all directions
+	int dir[4]; // keys for all directions
 	int finished;
 	MOVE mmm[1000];
 	int lastMove;
@@ -269,6 +269,16 @@ int movePlayer(PLAYER (*ppp)[], int i, int dir) {
 	}
 }
 
+int isPositionValid(POSITION pos, int dir) {
+	if (track[pos.y][pos.x] == ' ') {
+		return 1;
+	}
+	if (track[pos.y][pos.x] == '|' && dir != LEFT) {
+		return 1;
+	}
+	return 0;
+}
+
 int saveMove(PLAYER *p, int dir) {
 	MOVE m;
 	m.dir = dir;
@@ -301,17 +311,6 @@ POSITION getNewPosition(POSITION pos, int dir) {
 	}
 	return pos;
 }
-
-int isPositionValid(POSITION pos, int dir) {
-	if (track[pos.y][pos.x] == ' ') {
-		return 1;
-	}
-	if (track[pos.y][pos.x] == '|' && dir == RIGHT) {
-		return 1;
-	}
-	return 0;
-}
-
 	  ///////////////
 	 //// print ////
 	///////////////
