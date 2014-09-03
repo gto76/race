@@ -4,6 +4,7 @@
 
 #include "environment.h"
 #include "graphics.h"
+#include "output.h"
 
 ////////////////////////////
 
@@ -37,7 +38,6 @@ typedef struct player PLAYER;
 
 int checkMove(char c, PLAYER (*p)[]);
 int checkMove(char c, PLAYER (*p)[]);
-void term(int signum);
 int main(void);
 int clearScreen(void);
 int printPlayer(PLAYER *p);
@@ -69,7 +69,8 @@ int main(void) {
 		setPlayer(&ppp, 1, 30, 20, '2', 119, 115, 100, 97);
 
 		clearScreen();
-		printf("%s", track);
+		//printTrack();
+		printTrackAdvanced();
 		printAllPlayers(&ppp);
 		countdown();
 		setStartTime(&ppp);
@@ -183,25 +184,9 @@ int setStartTime(PLAYER (*ppp)[]) {
 	}
 }
 
-int results(PLAYER (*ppp)[]) {
-	int i;
-	for (i = 0; i < numOfPlayers; i++) {
-		PLAYER *p = &((*ppp)[i]);
-		clock_t start = (*p).mmm[0].time;
-		clock_t end = (*p).mmm[(*p).lastMove-1].time;
-		double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-		printf("\033[%d;%dH%c: %f\n", 10+i, 30, (*p).c, cpu_time_used);  	
-	}
-	sleep(2);
-	clearInputBuffer();
-	setMenuMode();
-    getc(stdin);
-}
-
 int countdown() {
 	int sec = 1;
 	int x = 36, y = 9;
-
 	printMatrixXY(three, x, y, 5);
 	sleep(sec);
 	printMatrixXY(two, x, y, 5);
@@ -228,6 +213,20 @@ int areAllFinished(PLAYER (*ppp)[]) {
 		}
 	}
 	return 1;
+}
+
+int results(PLAYER (*ppp)[]) {
+	int i;
+	for (i = 0; i < numOfPlayers; i++) {
+		PLAYER *p = &((*ppp)[i]);
+		clock_t start = (*p).mmm[0].time;
+		clock_t end = (*p).mmm[(*p).lastMove-1].time;
+		double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+		printf("\033[%d;%dH%c: %f\n", 10+i, 30, (*p).c, cpu_time_used);  	
+	}
+	sleep(2);
+	clearInputBuffer();
+	setMenuMode();
 }
 
 int checkMove(char c, PLAYER (*ppp)[]) {
@@ -323,41 +322,18 @@ int printAllPlayers(PLAYER (*ppp)[]) {
 }
 
 int printPlayer(PLAYER *p) {
-	printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, (*p).c);
+	printCharXY((*p).c, (*p).pos.x, (*p).pos.y);
+	//printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, (*p).c);
 }
 
 int erasePlayer(PLAYER *p) {
-	printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, ' ');
+	printCharXY(' ', (*p).pos.x, (*p).pos.y);
+	//printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, ' ');
 }
 
 int printChar(int c, POSITION pos) {
-	printf("\033[%d;%dH%c\n", pos.y+1, pos.x+1, c);
-}
-
-int printCharXY(int c, int x, int y) {
-	printf("\033[%d;%dH%c\n", y+1, x+1, c);  	
-}
-
-int printStringXY(int s[], int x, int y) {
-	printf("\033[%d;%dH%s\n", y+1, x+1, s);  	
-}
-
-int printMatrixXY(char m[][8], int x, int y, int size) {
-	int i;
-	for (i = 0; i < size; i++) {
-		printStringXY(m[i], x, y+i);
-	}
-}
-
-int printMatrixXYgo(char m[][22], int x, int y, int size) {
-	int i;
-	for (i = 0; i < size; i++) {
-		printStringXY(m[i], x, y+i);
-	}
-}
-
-int clearScreen(void) {
-	printf("\e[1;1H\e[2J");
+	printCharXY(c, pos.x, pos.y);
+	//printf("\033[%d;%dH%c\n", pos.y+1, pos.x+1, c);
 }
 
 

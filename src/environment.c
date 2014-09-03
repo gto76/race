@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <sys/ioctl.h>
+
+#include "term.h" 
 
 void setEnvironment();
 void checkTerminal();
