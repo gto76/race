@@ -66,11 +66,15 @@ int const numOfPlayers = 2;
 
 ////////////////////////////
 
+PLAYER (*players)[];
+
+////////////////////////////
+
 int main(void) {
 	setEnvironment();
 	setOutput();
 
-	while(1) { // outer game loop (menu -> game...)
+	while (1) { // outer game loop (menu -> game...)
 		setRaceMode();
 		char c;
 		PLAYER ppp[numOfPlayers];
@@ -78,12 +82,14 @@ int main(void) {
 		setPlayer(&ppp, 0, 30, 18, '1', 65, 66, 67, 68);
 		setPlayer(&ppp, 1, 30, 20, '2', 119, 115, 100, 97);
 
+		players = &ppp;
+
 		clearScreen();
 		printTrack();
 		printAllPlayers(&ppp);
 		countdown();
 		setStartTime(&ppp);
-		while(!areAllFinished(&ppp)) { // inner game loop
+		while (!areAllFinished(&ppp)) { // inner game loop
 			c = getc(stdin);
 			checkMove(c, &ppp);
 		}
@@ -92,10 +98,24 @@ int main(void) {
 	return EXIT_SUCCESS;
 }	
 
-////////////////////////////
+//////// PUBLIC /////////////
 
-// COMPUTER:
+OBJECT * getAllObjects() {
+	static OBJECT ooo[10];
+	int i;
+	for (i = 0; i < numOfPlayers; i++) {
+		ooo[i] = (*players)[i].obj;
+	}
+	return ooo;
+}
 
+int getNumberOfObjects() {
+	return numOfPlayers;
+}
+
+//////// COMPUTER ////////////
+
+/*
 // 32 (space) = -1;
 // 35 (#), everything else = -2
 // 124 (|) = 0
@@ -165,7 +185,7 @@ void setDistance(int (*paths)[][WIDTH], int x, int y, int distance) {
 int isPositionLegal(POSITION p) {
 	return p.x >= 0 && p.y >= 0 && p.x < WIDTH && p.y < HEIGHT;
 }
-	
+*/
 
 ////////////////////////////
 
@@ -196,14 +216,14 @@ int setStartTime(PLAYER (*ppp)[]) {
 int countdown() {
 	int sec = 1;
 	int x = 36, y = 9;
-	printMatrixXY(three, x, y, 5);
+	//printMatrixOnBoardXY(three, x, y, 5);
 	sleep(sec);
-	printMatrixXY(two, x, y, 5);
+	//printMatrixOnBoardXY(two, x, y, 5);
 	sleep(sec);
-	printMatrixXY(one, x, y, 5);
+	//printMatrixOnBoardXY(one, x, y, 5);
 	sleep(sec);
 	clearInputBuffer();
-	printMatrixXYgo(go, 29, y, 5);
+	//printMatrixOnBoardXYgo(go, 29, y, 5);
 }
 
 int clearInputBuffer() {
@@ -319,6 +339,7 @@ POSITION getNewPosition(POSITION pos, int dir) {
 	}
 	return pos;
 }
+
 	  ///////////////
 	 //// print ////
 	///////////////

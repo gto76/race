@@ -7,6 +7,7 @@
 
 void copyArray(char (*track)[], char *subArray, int width);
 void sigWinChCatcher(int signum);
+void registerSigWinChCatcher();
 
 int columns = 0;
 int rows = 0;
@@ -16,27 +17,8 @@ int rows = 0;
 int setOutput() {
 	registerSigWinChCatcher();
 }
-
 int printCharXY(char c, int x, int y) {
 	printf("\033[%d;%dH%c\n", y+1, x+1, c);  	
-}
-
-int printStringXY(char s[], int x, int y) {
-	printf("\033[%d;%dH%s\n", y+1, x+1, s);  	
-}
-
-int printMatrixXY(char m[][8], int x, int y, int size) {
-	int i;
-	for (i = 0; i < size; i++) {
-		printStringXY(m[i], x, y+i);
-	}
-}
-
-int printMatrixXYgo(char m[][22], int x, int y, int size) {
-	int i;
-	for (i = 0; i < size; i++) {
-		printStringXY(m[i], x, y+i);
-	}
 }
 
 /////////////////////////////
@@ -81,6 +63,18 @@ int clearScreen(void) {
 	printf("\e[1;1H\e[2J");
 }
 
+int printObject(OBJECT *obj, int i) {
+	printCharXY((*obj).c, (*obj).pos.x, (*obj).pos.y);
+	printf("\033[%d;%dH%c x:%d y:%d\n", 2+i, 2, (*obj).c, (*obj).pos.x, (*obj).pos.y);  	
+}
+
+int printObjects(OBJECT * ooo, int noOfObj) {
+	int i;
+	for (i = 0; i < noOfObj; i++) {
+		printObject((ooo+i), i);
+	}
+}
+
 //////////////////////////////
 
 void registerSigWinChCatcher() {
@@ -93,6 +87,10 @@ void sigWinChCatcher(int signum) {
 	updateConsoleSize();
 	clearScreen();
 	printTrack();
+	int noOfObj = getNumberOfObjects();
+	OBJECT * ooo;
+	ooo = getAllObjects();
+	printObjects(ooo, noOfObj);
 }
 
 //////////////////////////////

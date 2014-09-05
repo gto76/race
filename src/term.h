@@ -9,3 +9,5 @@ struct object {
 };
 typedef struct object OBJECT;
 
+OBJECT * getAllObjects();
+int getNumberOfObjects();
