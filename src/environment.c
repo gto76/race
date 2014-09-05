@@ -5,7 +5,7 @@
 #include <signal.h>
 #include <sys/ioctl.h>
 
-#include "term.h" 
+//#include "term.h" 
 
 void setEnvironment();
 void checkTerminal();

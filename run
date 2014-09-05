@@ -1,1 +1,3 @@
+#!/bin/bash
+
 gcc -o a.out src/*.c && ./a.out

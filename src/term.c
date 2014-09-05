@@ -5,18 +5,28 @@
 #include "environment.h"
 #include "graphics.h"
 #include "output.h"
+#include "term.h"
 
 ////////////////////////////
+
+/*
+// term.h:
+struct position {
+	int x, y;
+};
+typedef struct position POSITION;
+
+struct object {
+	POSITION pos;
+	char c;
+}
+typedef struct object OBJECT;
+*/
 
 int const WIDTH = 81;
 int const HEIGHT = 24;
 
 enum direction {UP, DOWN, RIGHT, LEFT};
-
-struct position {
-	int x, y;
-};
-typedef struct position POSITION;
 
 struct move {
 	int dir;
@@ -25,11 +35,10 @@ struct move {
 typedef struct move MOVE;
 
 struct player {
-	POSITION pos;
-	char c;
+	OBJECT obj; // position and char
 	int dir[4]; // keys for all directions
-	int finished;
-	MOVE mmm[1000];
+	int finished; 
+	MOVE mmm[1000]; // move log
 	int lastMove;
 };
 typedef struct player PLAYER;
@@ -59,6 +68,7 @@ int const numOfPlayers = 2;
 
 int main(void) {
 	setEnvironment();
+	setOutput();
 
 	while(1) { // outer game loop (menu -> game...)
 		setRaceMode();
@@ -69,8 +79,7 @@ int main(void) {
 		setPlayer(&ppp, 1, 30, 20, '2', 119, 115, 100, 97);
 
 		clearScreen();
-		//printTrack();
-		printTrackAdvanced();
+		printTrack();
 		printAllPlayers(&ppp);
 		countdown();
 		setStartTime(&ppp);
@@ -162,9 +171,9 @@ int isPositionLegal(POSITION p) {
 
 int setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left) {
 	PLAYER *p = &((*ppp)[i]);
-	(*p).pos.x = x;
-	(*p).pos.y = y;
-	(*p).c = c;
+	(*p).obj.pos.x = x;
+	(*p).obj.pos.y = y;
+	(*p).obj.c = c;
 	(*p).dir[0] = up; 
 	(*p).dir[1] = down;
 	(*p).dir[2] = right;
@@ -222,7 +231,7 @@ int results(PLAYER (*ppp)[]) {
 		clock_t start = (*p).mmm[0].time;
 		clock_t end = (*p).mmm[(*p).lastMove-1].time;
 		double cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-		printf("\033[%d;%dH%c: %f\n", 10+i, 30, (*p).c, cpu_time_used);  	
+		printf("\033[%d;%dH%c: %f\n", 10+i, 30, (*p).obj.c, cpu_time_used);  	
 	}
 	sleep(2);
 	clearInputBuffer();
@@ -243,7 +252,7 @@ int checkMove(char c, PLAYER (*ppp)[]) {
 
 int movePlayer(PLAYER (*ppp)[], int i, int dir) {
 	PLAYER *p = &(*ppp)[i];
-	POSITION oldPosition = (*p).pos;
+	POSITION oldPosition = (*p).obj.pos;
 	POSITION newPosition = getNewPosition(oldPosition, dir);
 	if (isPositionValid(newPosition, dir)) {
 		// save move if not yet finished:
@@ -260,7 +269,7 @@ int movePlayer(PLAYER (*ppp)[], int i, int dir) {
 		if (symbol == '|') { 
 			printChar('|', oldPosition);
 		}
-		(*p).pos = newPosition;
+		(*p).obj.pos = newPosition;
 		// so that if two were on the same spot both get printed:
 		printAllPlayers(ppp);
 		// so that it if two are on the same spot the last thet arrived gets printed:
@@ -322,12 +331,12 @@ int printAllPlayers(PLAYER (*ppp)[]) {
 }
 
 int printPlayer(PLAYER *p) {
-	printCharXY((*p).c, (*p).pos.x, (*p).pos.y);
+	printCharXY((*p).obj.c, (*p).obj.pos.x, (*p).obj.pos.y);
 	//printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, (*p).c);
 }
 
 int erasePlayer(PLAYER *p) {
-	printCharXY(' ', (*p).pos.x, (*p).pos.y);
+	printCharXY(' ', (*p).obj.pos.x, (*p).obj.pos.y);
 	//printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, ' ');
 }
 
