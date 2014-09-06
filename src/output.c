@@ -5,24 +5,28 @@
 #include "graphics.h"
 #include "term.h"
 
-void copyArray(char (*track)[], char *subArray, int width);
+void copyArray(const char (*track)[81], char *subArray, int width);
 void sigWinChCatcher(int signum);
 void registerSigWinChCatcher();
 
-int columns = 0;
-int rows = 0;
+int columns = 80;
+int rows = 24;
 
 ///////// PUBLIC ////////////
 
 int setOutput() {
 	registerSigWinChCatcher();
-}
-int printCharXY(char c, int x, int y) {
-	printf("\033[%d;%dH%c\n", y+1, x+1, c);  	
+	updateConsoleSize();
 }
 
-/////////////////////////////
-/*
+int printCharXY(char c, int x, int y) {
+	if (x < columns && y < rows) {
+		printf("\033[%d;%dH%c", y+1, x+1, c);  	
+	}
+}
+
+////////// DRAW ///////////
+/* OLD
 int printTrack() {
 	printf("%s", trackNl);
 }
@@ -51,21 +55,12 @@ int printTrack() {
 	}
 }
 
-void copyArray(char (*track)[], char *subArray, int width) {
-	int i;
-	for (i = 0; i < width-1; i++) {
-		subArray[i] = (*track)[i];
-	}
-	subArray[i] = '\0';
-}
-
 int clearScreen(void) {
 	printf("\e[1;1H\e[2J");
 }
 
 int printObject(OBJECT *obj, int i) {
 	printCharXY((*obj).c, (*obj).pos.x, (*obj).pos.y);
-	printf("\033[%d;%dH%c x:%d y:%d\n", 2+i, 2, (*obj).c, (*obj).pos.x, (*obj).pos.y);  	
 }
 
 int printObjects(OBJECT * ooo, int noOfObj) {
@@ -75,15 +70,7 @@ int printObjects(OBJECT * ooo, int noOfObj) {
 	}
 }
 
-//////////////////////////////
-
-void registerSigWinChCatcher() {
-	struct sigaction action;
-	action.sa_handler = sigWinChCatcher;
-	sigaction(SIGWINCH, &action, NULL);
-}
-
-void sigWinChCatcher(int signum) {
+void redrawScreen() {
 	updateConsoleSize();
 	clearScreen();
 	printTrack();
@@ -93,11 +80,35 @@ void sigWinChCatcher(int signum) {
 	printObjects(ooo, noOfObj);
 }
 
-//////////////////////////////
+/////////// SIGNALS /////////////
+
+void registerSigWinChCatcher() {
+	struct sigaction action;
+
+	sigemptyset(&action.sa_mask);
+    action.sa_flags = 0;
+
+	action.sa_handler = sigWinChCatcher;
+	sigaction(SIGWINCH, &action, NULL);
+}
+
+void sigWinChCatcher(int signum) {
+	redrawScreen();
+}
 
 int updateConsoleSize() {
 	struct winsize w;
 	ioctl(0, TIOCGWINSZ, &w);
 	columns = w.ws_col;
 	rows = w.ws_row;
+}
+
+/////////// UTIL ////////////
+
+void copyArray(const char (*track)[81], char *subArray, int width) {
+	int i;
+	for (i = 0; i < width-1; i++) {
+		subArray[i] = (*track)[i];
+	}
+	subArray[i] = '\0';
 }

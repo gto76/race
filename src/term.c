@@ -68,7 +68,7 @@ int const numOfPlayers = 2;
 
 PLAYER (*players)[];
 
-////////////////////////////
+////////// MAIN ///////////
 
 int main(void) {
 	setEnvironment();
@@ -84,12 +84,26 @@ int main(void) {
 
 		players = &ppp;
 
-		clearScreen();
-		printTrack();
-		printAllPlayers(&ppp);
-		countdown();
-		setStartTime(&ppp);
-		while (!areAllFinished(&ppp)) { // inner game loop
+		//updateConsoleSize();
+		//clearScreen();
+		//printTrack();
+		//printAllPlayers(&ppp);
+
+		//c = getc(stdin);
+		//checkMove(c, &ppp);
+		//sleep(1);
+
+	//	printf("\033[%d;%dH%s", 2, 2, "uahahahahaha");
+		redrawScreen();
+		fflush(stdout);
+
+		//sigWinChCatcher(0);
+		//printWindowSize();
+
+		//countdown();
+		//setStartTime(&ppp);
+		sleep(5);
+		while (!areAllFinished(&ppp)) { // inner game loop - race
 			c = getc(stdin);
 			checkMove(c, &ppp);
 		}
@@ -112,80 +126,6 @@ OBJECT * getAllObjects() {
 int getNumberOfObjects() {
 	return numOfPlayers;
 }
-
-//////// COMPUTER ////////////
-
-/*
-// 32 (space) = -1;
-// 35 (#), everything else = -2
-// 124 (|) = 0
-int** getEmptyDistanceMatrix() {
-	int paths[HEIGHT][WIDTH];
-	int i, j;
-	for (i = 0; i < HEIGHT; i++) {
-		for (j = 0; j < WIDTH; j++) {
-			char c = track[i][j];
-			if (c == ' ') {
-				paths[i][j] = -1;
-			} else if (c == '|') {
-				paths[i][j] = 0;
-				paths[i][j-1] = 1;
-			} else {
-				paths[i][j] = -2;
-			}
-		}
-	}
-	return paths;
-}
-
-// If fields value eqals distance than assign distance+1 to all neighbouring fields
-//23   323
-//123 32123
-//012 21012
-//12   212
-//12    2
-//012 
-//12
-//2
-int** getDistanceMatrix(char track[][WIDTH]) {
-	int** paths = getEmptyDistanceMatrix();
-	int notFinished = 1;
-	int distance = 1, i, j;
-	while (notFinished) {
-		notFinished = 0;
-		for (i = 0; i < HEIGHT; i++) {
-			for (j = 0; j < WIDTH; j++) {
-				if (paths[i][j] == distance) {
-					notFinished = 1;
-					floodNeighbours(&paths, j, i, distance);
-				}
-			}
-		}
-		distance++;
-	}
-	return paths;
-}
-
-void floodNeighbours(int (*paths)[][WIDTH], int x, int y, int distance) {
-	setDistance(paths, x, y-1, distance);
-	setDistance(paths, x, y+1, distance);
-	setDistance(paths, x+1, y, distance);
-	setDistance(paths, x-1, y, distance);
-}
-
-void setDistance(int (*paths)[][WIDTH], int x, int y, int distance) {
-	POSITION p;
-	p.x = x;
-	p.y = y;
-	if (isPositionLegal(p) && (*paths)[y][x] == -1) {
-		(*paths)[y][x] = distance;
-	}
-}
-
-int isPositionLegal(POSITION p) {
-	return p.x >= 0 && p.y >= 0 && p.x < WIDTH && p.y < HEIGHT;
-}
-*/
 
 ////////////////////////////
 
@@ -353,17 +293,14 @@ int printAllPlayers(PLAYER (*ppp)[]) {
 
 int printPlayer(PLAYER *p) {
 	printCharXY((*p).obj.c, (*p).obj.pos.x, (*p).obj.pos.y);
-	//printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, (*p).c);
 }
 
 int erasePlayer(PLAYER *p) {
 	printCharXY(' ', (*p).obj.pos.x, (*p).obj.pos.y);
-	//printf("\033[%d;%dH%c\n", (*p).pos.y+1, (*p).pos.x+1, ' ');
 }
 
 int printChar(int c, POSITION pos) {
 	printCharXY(c, pos.x, pos.y);
-	//printf("\033[%d;%dH%c\n", pos.y+1, pos.x+1, c);
 }
 
 
