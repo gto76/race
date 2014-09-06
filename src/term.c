@@ -88,21 +88,12 @@ int main(void) {
 		//clearScreen();
 		//printTrack();
 		//printAllPlayers(&ppp);
-
-		//c = getc(stdin);
-		//checkMove(c, &ppp);
-		//sleep(1);
-
-	//	printf("\033[%d;%dH%s", 2, 2, "uahahahahaha");
 		redrawScreen();
 		fflush(stdout);
 
-		//sigWinChCatcher(0);
-		//printWindowSize();
+		countdown();
+		setStartTime(&ppp);
 
-		//countdown();
-		//setStartTime(&ppp);
-		sleep(5);
 		while (!areAllFinished(&ppp)) { // inner game loop - race
 			c = getc(stdin);
 			checkMove(c, &ppp);
