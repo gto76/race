@@ -26,12 +26,22 @@ int printCharXY(char c, int x, int y) {
 	}
 }
 
-////////// DRAW ///////////
-/* OLD
-int printTrack() {
-	printf("%s", trackNl);
+int printString(const char s[], int x, int y) {
+	int itIsOutOfTheScreen = x >= columns || y >= rows || x < 0 || y < 0;
+	if (itIsOutOfTheScreen)
+		return;
+	int itDoesntFitTheScreen = strlen(s) + x > columns;
+	if (itDoesntFitTheScreen) {
+		int distanceToTheRightEdge = columns - x - 1;
+		char subArray[distanceToTheRightEdge+2];
+		copyArray(subArray, s, distanceToTheRightEdge+2);
+		printf("\033[%d;%dH%s", y+1, x+1, subArray);
+	} else {
+		printf("\033[%d;%dH%s", y+1, x+1, s);
+	}
 }
-*/
+
+////////// DRAW ///////////
 
 int printTrack() {
 	updateConsoleSize();
@@ -50,12 +60,10 @@ int printTrack() {
 	}
 
 	for (i = 0; i < height; i++) {
-		char subArray[width];
-		//copyArray(&(track[i]), subArray,  width+1); OLD
-		//copyArray(&(track[i]), &subArray,  width+1); 
-		copyArray(subArray, track[i], width);
-
-		printf("\033[%d;%dH%s", i+1, 1, subArray);
+		//char subArray[width+1];
+		//copyArray(subArray, track[i], width+1);
+		//printf("\033[%d;%dH%s", i+1, 1, subArray);
+		printString(track[i], 0, i);
 	}
 }
 

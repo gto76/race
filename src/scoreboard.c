@@ -24,10 +24,14 @@ int setScoreboard() {
 	}
 }
 
-int printCharOnBoardXY(char c, int x, int y) {
-	if (coordinatesAreInsideBoard(x,y)) {
-		sb_printChar(c, x, y);
+//////////////////
+
+int printMatrixOnBoardXY(char const *matrix, int x, int y) {
+	char const **mp;
+	for (mp = matrix; *mp != NULL; mp++) {
+		printStringOnBoardXY(*mp, x, y++);
 	}
+	fflush(stdout);
 }
 
 int printStringOnBoardXY(char s[], int x, int y) {
@@ -40,7 +44,7 @@ int printStringOnBoardXY(char s[], int x, int y) {
 		//char subArray[newWidth+1];
 		//copyArray(&s, &subArray, newWidth);
 	} else {
-		sb_printString(s, x, y);
+		sb_printStringAndWriteToBuffer(s, x, y);
 	}
 }
 
@@ -51,41 +55,19 @@ int coordinatesAreInsideBoard(int x, int y) {
 int stringOverRightEdge(char s[], int x) {
 	return SB_WIDTH < strlen(s) + x;
 }
-/*
-int printMatrixOnBoardXY(char m[][], int x, int y, int size) {
-	int i;
-	for (i = 0; i < size; i++) {
-		printStringOnBoardXY(m[i], x, y+i);
+
+int printCharOnBoardXY(char c, int x, int y) {
+	if (coordinatesAreInsideBoard(x,y)) {
+		sb_printChar(c, x, y);
 	}
 }
 
-int printMatrixOnBoardXY(char *m, size_t M, size_t N, int x, int y) {
-	size_t i;
-	for (i = 0; i < M; i++) {
-		printStringOnBoardXY(&m[i*N], x, y+i);
-	}
-}
-*/
+///////////////////
 
-int printMatrixOnBoardXY(char const *matrix, int x, int y) {
-	char const **mp;
-	for (mp = matrix; *mp != NULL; mp++) {
-		printStringOnBoardXY(*mp, x, y++);
-	}
-}
-
-/*
-int printMatrixOnBoardXYgo(char m[][22], int x, int y, int size) {
-	int i;
-	for (i = 0; i < size; i++) {
-		printStringOnBoardXY(m[i], x, y+i);
-	}
-}
-*/
 int printScoreboardBuffer() {
 	int i, j;
 	for (i = 0; i < SB_HEIGHT; i++) {
-		sb_printString_noBuff(buffer[i], 0, i);
+		sb_printString(buffer[i], 0, i);
 	}
 	fflush(stdout);
 }
@@ -97,21 +79,29 @@ int eraseScoreboard() {
 
 ///////// PRIVATE ///////////
 
-
 int sb_printChar(char c, int x, int y) {
 	printf("\033[%d;%dH%c\n", y+1+SB_LOCATION_Y, x+1+SB_LOCATION_X, c);  	
 	buffer[y][x] = c;
 }
 
+int sb_printStringAndWriteToBuffer(char s[], int x , int y) {
+	sb_printString(s, x ,y);
+	sb_writeToBuffer(s, x , y);
+}
+
 int sb_printString(char s[], int x , int y) {
-	printf("\033[%d;%dH%s\n", y+1+SB_LOCATION_Y, x+1+SB_LOCATION_X, s);  	
+//	printf("\033[%d;%dH%s\n", y+1+SB_LOCATION_Y, x+1+SB_LOCATION_X, s);  	
+	printString(s, x+SB_LOCATION_X, y+SB_LOCATION_Y);
+}
+
+int sb_writeToBuffer(char s[], int x , int y) {
 	int i;
 	for (i = 0; i < strlen(s); i++) {
 		buffer[y][x+i] = s[i];
 	}
 }
-
+/*
 int sb_printString_noBuff(char s[], int x , int y) {
 	printf("\033[%d;%dH%s\n", y+1+SB_LOCATION_Y, x+1+SB_LOCATION_X, s);  	
 }
-
+*/
