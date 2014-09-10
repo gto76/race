@@ -50,9 +50,10 @@ int printTrack() {
 	}
 
 	for (i = 0; i < height; i++) {
-		char subArray[width+1];
+		char subArray[width];
 		//copyArray(&(track[i]), subArray,  width+1); OLD
-		copyArray(&(track[i]), &subArray,  width+1); 
+		//copyArray(&(track[i]), &subArray,  width+1); 
+		copyArray(subArray, track[i], width);
 
 		printf("\033[%d;%dH%s", i+1, 1, subArray);
 	}

@@ -1,3 +1,2 @@
 
-void copyArray(char (*array)[], char (*subArray)[], int width);
-
+void copyArray(char dest[], const char src[], int width);

@@ -58,12 +58,19 @@ int printMatrixOnBoardXY(char m[][], int x, int y, int size) {
 		printStringOnBoardXY(m[i], x, y+i);
 	}
 }
-*/
 
 int printMatrixOnBoardXY(char *m, size_t M, size_t N, int x, int y) {
 	size_t i;
 	for (i = 0; i < M; i++) {
 		printStringOnBoardXY(&m[i*N], x, y+i);
+	}
+}
+*/
+
+int printMatrixOnBoardXY(char const *matrix, int x, int y) {
+	char const **mp;
+	for (mp = matrix; *mp != NULL; mp++) {
+		printStringOnBoardXY(*mp, x, y++);
 	}
 }
 
