@@ -1,0 +1,3 @@
+#!/bin/bash
+
+gcc -o a.out src/*.c -w

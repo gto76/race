@@ -4,8 +4,9 @@
 
 #include "graphics.h"
 #include "term.h"
+#include "util.h"
+#include "scoreboard.h"
 
-void copyArray(const char (*track)[81], char *subArray, int width);
 void sigWinChCatcher(int signum);
 void registerSigWinChCatcher();
 
@@ -50,7 +51,9 @@ int printTrack() {
 
 	for (i = 0; i < height; i++) {
 		char subArray[width+1];
-		copyArray(&(track[i]), subArray,  width+1);
+		//copyArray(&(track[i]), subArray,  width+1); OLD
+		copyArray(&(track[i]), &subArray,  width+1); 
+
 		printf("\033[%d;%dH%s", i+1, 1, subArray);
 	}
 }
@@ -78,6 +81,8 @@ void redrawScreen() {
 	OBJECT * ooo;
 	ooo = getAllObjects();
 	printObjects(ooo, noOfObj);
+	printScoreboardBuffer();
+	fflush(stdout);
 }
 
 /////////// SIGNALS /////////////
@@ -103,12 +108,3 @@ int updateConsoleSize() {
 	rows = w.ws_row;
 }
 
-/////////// UTIL ////////////
-
-void copyArray(const char (*track)[81], char *subArray, int width) {
-	int i;
-	for (i = 0; i < width-1; i++) {
-		subArray[i] = (*track)[i];
-	}
-	subArray[i] = '\0';
-}

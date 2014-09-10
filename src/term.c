@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #include "environment.h"
 #include "graphics.h"
 #include "output.h"
 #include "term.h"
+#include "scoreboard.h"
 
 ////////////////////////////
 
@@ -73,27 +75,21 @@ PLAYER (*players)[];
 int main(void) {
 	setEnvironment();
 	setOutput();
+	setScoreboard();
 
 	while (1) { // outer game loop (menu -> game...)
 		setRaceMode();
 		char c;
 		PLAYER ppp[numOfPlayers];
-
 		setPlayer(&ppp, 0, 30, 18, '1', 65, 66, 67, 68);
 		setPlayer(&ppp, 1, 30, 20, '2', 119, 115, 100, 97);
-
 		players = &ppp;
-
-		//updateConsoleSize();
-		//clearScreen();
-		//printTrack();
-		//printAllPlayers(&ppp);
 		redrawScreen();
+		eraseScoreboard();
 		fflush(stdout);
 
 		countdown();
 		setStartTime(&ppp);
-
 		while (!areAllFinished(&ppp)) { // inner game loop - race
 			c = getc(stdin);
 			checkMove(c, &ppp);
@@ -146,15 +142,41 @@ int setStartTime(PLAYER (*ppp)[]) {
 
 int countdown() {
 	int sec = 1;
-	int x = 36, y = 9;
-	//printMatrixOnBoardXY(three, x, y, 5);
-	sleep(sec);
-	//printMatrixOnBoardXY(two, x, y, 5);
-	sleep(sec);
-	//printMatrixOnBoardXY(one, x, y, 5);
-	sleep(sec);
+	int x = 10, y = 0;
+//	printMatrixOnBoardXY(three, x, y, 5);
+	printMatrixOnBoardXY(&three[0][0], sizeof(three), sizeof(three[0]), x, y);
+	// wrong size of three should be size of one line in bytes	
+	// and size of three[0] the size of pointer (so size of char?)
+	deepSleep1();
+//	printMatrixOnBoardXY(two, x, y, 5);
+	printMatrixOnBoardXY(&two[0][0], sizeof(two), sizeof(two[0]), x, y);
+	deepSleep1();
+//	printMatrixOnBoardXY(one, x, y, 5);
+	printMatrixOnBoardXY(&one[0][0], sizeof(one), sizeof(one[0]), x, y);
+	deepSleep1();
 	clearInputBuffer();
-	//printMatrixOnBoardXYgo(go, 29, y, 5);
+//	printMatrixOnBoardXY(go, 3, y, 5);
+	//printMatrixOnBoardXY(&go[0][0], sizeof(go), sizeof(go[0]), 3, y);
+	char a[7][25] = {
+		"************************\0",
+		"************************\0",
+		"************************\0",
+		"************************\0",
+		"************************\0",
+		"************************\0",
+		'\0'
+	};
+	printMatrixOnBoardXY(&a[0][0], sizeof(a), strlen(a[0]), 0, 0);
+	//printStringOnBoardXY(a[0], 0, 0);
+	//printStringOnBoardXY(a[1], 0, 1);
+	//printStringOnBoardXY(a[2], 0, 2);
+	//printStringOnBoardXY(a[3], 0, 3);
+	//printStringOnBoardXY(a[4], 0, 4);
+}
+
+// Goes back to sleep if awakend by signal
+int deepSleep1() {
+	while (sleep(1));
 }
 
 int clearInputBuffer() {
