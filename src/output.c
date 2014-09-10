@@ -10,8 +10,10 @@
 void sigWinChCatcher(int signum);
 void registerSigWinChCatcher();
 
-int columns = 80;
-int rows = 24;
+int columns = TRACK_WIDTH;
+int rows = TRACK_HEIGHT;
+
+#define PRINT_IN_CENTER 1
 
 ///////// PUBLIC ////////////
 
@@ -20,43 +22,62 @@ int setOutput() {
 	updateConsoleSize();
 }
 
+/////////////////////////
+
 int printCharXY(char c, int x, int y) {
-	if (x < columns && y < rows) {
-		printf("\033[%d;%dH%c", y+1, x+1, c);  	
-	}
+	if (coordinatesOutOfBounds(x, y))
+		return;
+	printf("\033[%d;%dH%c", getAbsoluteY(y), getAbsoluteX(x), c);  	
 }
 
 int printString(const char s[], int x, int y) {
-	int itIsOutOfTheScreen = x >= columns || y >= rows || x < 0 || y < 0;
-	if (itIsOutOfTheScreen)
+	if (coordinatesOutOfBounds(x, y))
 		return;
 	int itDoesntFitTheScreen = strlen(s) + x > columns;
 	if (itDoesntFitTheScreen) {
 		int distanceToTheRightEdge = columns - x - 1;
 		char subArray[distanceToTheRightEdge+2];
 		copyArray(subArray, s, distanceToTheRightEdge+2);
-		printf("\033[%d;%dH%s", y+1, x+1, subArray);
+		s = subArray;
+		printf("\033[%d;%dH%s", getAbsoluteY(y), getAbsoluteX(x), subArray);
 	} else {
-		printf("\033[%d;%dH%s", y+1, x+1, s);
+		printf("\033[%d;%dH%s", getAbsoluteY(y), getAbsoluteX(x), s);
 	}
 }
+
+int getAbsoluteX(int x) {
+	return getAbsoluteCoordinate(x, columns, TRACK_WIDTH);
+}
+
+int getAbsoluteY(int y) {
+	return getAbsoluteCoordinate(y, rows, TRACK_HEIGHT);
+}
+
+int getAbsoluteCoordinate(int value, int console, int track) {
+	int offset = 0;
+	if (PRINT_IN_CENTER) {
+		offset = (console - track) / 2;
+		if (offset < 0)
+			offset = 0;
+	}
+	return value+1 + offset;
+}
+
+int coordinatesOutOfBounds(int x, int y) {
+	return x >= columns || y >= rows || x < 0 || y < 0;
+}
+
 
 ////////// DRAW ///////////
 
 int printTrack() {
 	updateConsoleSize();
 	int i;
-	int width, height;
+	int height;
 	if (rows < 24) {
 		height = rows;
 	} else {
 		height = 24;
-	}
-
-	if (columns < 81) {
-		width = columns; 
-	} else {
-		width = 81;
 	}
 
 	for (i = 0; i < height; i++) {
@@ -65,6 +86,7 @@ int printTrack() {
 		//printf("\033[%d;%dH%s", i+1, 1, subArray);
 		printString(track[i], 0, i);
 	}
+	fflush(stdout);
 }
 
 int clearScreen(void) {

@@ -25,9 +25,6 @@ struct object {
 typedef struct object OBJECT;
 */
 
-int const WIDTH = 81;
-int const HEIGHT = 24;
-
 enum direction {UP, DOWN, RIGHT, LEFT};
 
 struct move {
@@ -59,7 +56,7 @@ POSITION getNewPosition(POSITION pos, int dir);
 int setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left);
 
 
-void setDistance(int (*paths)[][WIDTH], int x, int y, int distance);
+void setDistance(int (*paths)[][TRACK_WIDTH+1], int x, int y, int distance);
 
 ////////////////////////////
 
