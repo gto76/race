@@ -74,11 +74,12 @@ int main(void) {
 	setOutput();
 	setScoreboard();
 
-	while (1) { // outer game loop (menu -> game...)
+
+	while(1) {
 		setRaceMode();
 		char c;
 		PLAYER ppp[numOfPlayers];
-		setPlayer(&ppp, 0, 30, 18, '1', 65, 66, 67, 68);
+		setPlayer(&ppp, 0, 30, 18, '1', 65, 66, 67, 68); // change x from 30 to 40! 
 		setPlayer(&ppp, 1, 30, 20, '2', 119, 115, 100, 97);
 		players = &ppp;
 		redrawScreen();
@@ -86,13 +87,24 @@ int main(void) {
 		fflush(stdout);
 
 		countdown();
-		setStartTime(&ppp);
-		while (!areAllFinished(&ppp)) { // inner game loop - race
+		setStartTime(&ppp); 
+		// inner game loop - race:
+		while (!weHaveAWinner(&ppp)) { 
 			c = getc(stdin);
 			checkMove(c, &ppp);
 		}
-		results(&ppp);
+
+		fflush(stdout);
+		deepSleep1();
+		clearInputBuffer();
+		while (c != '\n') {
+			c = getc(stdin);
+			if (c == 27) { // Esc
+				return EXIT_SUCCESS;
+			}
+		}
 	}
+
 	return EXIT_SUCCESS;
 }	
 
@@ -173,6 +185,16 @@ int areAllFinished(PLAYER (*ppp)[]) {
 	return 1;
 }
 
+int weHaveAWinner(PLAYER (*ppp)[]) {
+	int i;
+	for (i = 0; i < numOfPlayers; i++) {
+		if (((*ppp)[i]).finished == 1) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
 int results(PLAYER (*ppp)[]) {
 	int i;
 	for (i = 0; i < numOfPlayers; i++) {
@@ -221,7 +243,7 @@ int movePlayer(PLAYER (*ppp)[], int i, int dir) {
 		(*p).obj.pos = newPosition;
 		// so that if two were on the same spot both get printed:
 		printAllPlayers(ppp);
-		// so that it if two are on the same spot the last thet arrived gets printed:
+		// so that it if two are on the same spot the last that arrived gets printed:
 		printPlayer(p); 
 	}
 }
