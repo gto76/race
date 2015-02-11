@@ -79,8 +79,8 @@ int main(void) {
 		setRaceMode();
 		char c;
 		PLAYER ppp[numOfPlayers];
-		setPlayer(&ppp, 0, 30, 18, '1', 65, 66, 67, 68); // change x from 30 to 40! 
-		setPlayer(&ppp, 1, 30, 20, '2', 119, 115, 100, 97);
+		setPlayer(&ppp, 0, 40, 18, '1', 65, 66, 67, 68); 
+		setPlayer(&ppp, 1, 40, 20, '2', 119, 115, 100, 97);
 		players = &ppp;
 		redrawScreen();
 		eraseScoreboard();
