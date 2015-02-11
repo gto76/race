@@ -77,32 +77,23 @@ int main(void) {
 
 	while(1) {
 		setRaceMode();
-		char c;
 		PLAYER ppp[numOfPlayers];
 		setPlayer(&ppp, 0, 40, 18, '1', 65, 66, 67, 68); 
 		setPlayer(&ppp, 1, 40, 20, '2', 119, 115, 100, 97);
 		players = &ppp;
-		redrawScreen();
-		eraseScoreboard();
-		fflush(stdout);
 
+		initPlayers();
+		redrawScreen();
+		splashScreen();
 		countdown();
+
 		setStartTime(&ppp); 
-		// inner game loop - race:
+		char c;
 		while (!weHaveAWinner(&ppp)) { 
 			c = getc(stdin);
 			checkMove(c, &ppp);
 		}
-
-		fflush(stdout);
-		deepSleep1();
-		clearInputBuffer();
-		while (c != '\n') {
-			c = getc(stdin);
-			if (c == 27) { // Esc
-				return EXIT_SUCCESS;
-			}
-		}
+		waitForEnter();
 	}
 
 	return EXIT_SUCCESS;
@@ -124,6 +115,29 @@ int getNumberOfObjects() {
 }
 
 ////////////////////////////
+
+int initPlayers() {
+	PLAYER ppp[numOfPlayers];
+	setPlayer(&ppp, 0, 40, 18, '1', 65, 66, 67, 68); 
+	setPlayer(&ppp, 1, 40, 20, '2', 119, 115, 100, 97);
+	players = &ppp;
+}
+
+int splashScreen() {
+	int x = 2, y = 0;
+	eraseScoreboard();
+	printMatrixOnBoardXY(race, x, y);
+	waitForEnter();
+}
+
+int waitForEnter() {
+	fflush(stdout);
+	clearInputBuffer();
+	char c = getc(stdin);
+	while (c != '\n') {
+		c = getc(stdin);
+	}
+}
 
 int setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left) {
 	PLAYER *p = &((*ppp)[i]);
@@ -152,6 +166,8 @@ int setStartTime(PLAYER (*ppp)[]) {
 int countdown() {
 	int sec = 1;
 	int x = 10, y = 0;
+	fflush(stdout);
+	eraseScoreboard();
 	printMatrixOnBoardXY(three, x, y);
 	deepSleep1();
 	printMatrixOnBoardXY(two, x, y);
