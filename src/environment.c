@@ -81,8 +81,10 @@ void sigIntCatcher(int signum) {
 }
 
 void disableRepeatAndCursor() {
-	// disable repeat
+	// disable repeat in xwindow cosole
 	system("xset -r"); 
+	// disable repeat in Linux console
+	system("setterm --repeat off");
 	// set cursor off. could also probably use system("setterm -cursor off);
 	printf("\e[?25l");
 	fflush(stdout);
@@ -101,8 +103,10 @@ void resetInputMode() {
 }
 
 void enableRepeatAndCursor() {
-	// enable repeat	
+	// enable repeat in Xwindow console
 	system("xset r");
+	// disable repeat in Linux console
+	system("setterm --repeat on");
 	system("clear");
 	// bring back cursor
 	printf("\e[?25h");
