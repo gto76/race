@@ -57,7 +57,6 @@ void setRaceMode() {
 
 void setNoncanonicalMode(int vmin, int vtime) {
 	struct termios tattr;
-	char *name;
 	// set noncanonical mode, disable echo
 	atexit(resetEnvironment);
 	tcgetattr(STDIN_FILENO, &tattr);

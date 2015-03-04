@@ -1,7 +1,7 @@
 #include <stddef.h>
 
-int printCharOnBoardXY(char c, int x, int y);
-int printStringOnBoardXY(char s[], int x, int y);
-int printMatrixOnBoardXY(char const *matrix, int x, int y);
-int printScoreboardBuffer();
+void printCharOnBoardXY(char c, int x, int y);
+void printStringOnBoardXY(char s[], int x, int y);
+void printMatrixOnBoardXY(char const *matrix, int x, int y);
+void printScoreboardBuffer();
 

@@ -44,16 +44,15 @@ typedef struct player PLAYER;
 
 ////////////////////////////
 
-int checkMove(char c, PLAYER (*p)[]);
-int checkMove(char c, PLAYER (*p)[]);
+void checkMove(char c, PLAYER (*p)[]);
 int main(void);
-int clearScreen(void);
-int printPlayer(PLAYER *p);
-int erasePlayer(PLAYER *p);
+void clearScreen(void);
+void printPlayer(PLAYER *p);
+void erasePlayer(PLAYER *p);
 int isPositionValid(POSITION pos, int dir);
-int movePlayer(PLAYER (*p)[], int i, int dir);
+void movePlayer(PLAYER (*p)[], int i, int dir);
 POSITION getNewPosition(POSITION pos, int dir);
-int setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left);
+void setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left);
 
 
 void setDistance(int (*paths)[][TRACK_WIDTH+1], int x, int y, int distance);
@@ -116,21 +115,21 @@ int getNumberOfObjects() {
 
 ////////////////////////////
 
-int initPlayers() {
+void initPlayers() {
 	PLAYER ppp[numOfPlayers];
 	setPlayer(&ppp, 0, 40, 18, '1', 65, 66, 67, 68); 
 	setPlayer(&ppp, 1, 40, 20, '2', 119, 115, 100, 97);
 	players = &ppp;
 }
 
-int splashScreen() {
+void splashScreen() {
 	int x = 2, y = 0;
 	eraseScoreboard();
 	printMatrixOnBoardXY(race, x, y);
 	waitForEnter();
 }
 
-int waitForEnter() {
+void waitForEnter() {
 	fflush(stdout);
 	clearInputBuffer();
 	char c = getc(stdin);
@@ -139,7 +138,7 @@ int waitForEnter() {
 	}
 }
 
-int setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left) {
+void setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left) {
 	PLAYER *p = &((*ppp)[i]);
 	(*p).obj.pos.x = x;
 	(*p).obj.pos.y = y;
@@ -152,7 +151,7 @@ int setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, in
 	(*p).lastMove = 0; 
 }
 
-int setStartTime(PLAYER (*ppp)[]) {
+void setStartTime(PLAYER (*ppp)[]) {
 	int i;
 	MOVE m;
 	m.dir = 0;
@@ -163,7 +162,7 @@ int setStartTime(PLAYER (*ppp)[]) {
 	}
 }
 
-int countdown() {
+void countdown() {
 	int sec = 1;
 	int x = 10, y = 0;
 	fflush(stdout);
@@ -179,11 +178,11 @@ int countdown() {
 }
 
 // Goes back to sleep if awakend by signal
-int deepSleep1() {
+void deepSleep1() {
 	while (sleep(1));
 }
 
-int clearInputBuffer() {
+void clearInputBuffer() {
 	int const COUNTDOWN_BUFFER = 120; 
 	char buf[COUNTDOWN_BUFFER * 3]; // you need 3 chars to clear one keystroke
 	size_t nbytes;
@@ -211,7 +210,7 @@ int weHaveAWinner(PLAYER (*ppp)[]) {
 	return 0;
 }
 
-int results(PLAYER (*ppp)[]) {
+void results(PLAYER (*ppp)[]) {
 	int i;
 	for (i = 0; i < numOfPlayers; i++) {
 		PLAYER *p = &((*ppp)[i]);
@@ -225,19 +224,19 @@ int results(PLAYER (*ppp)[]) {
 	setMenuMode();
 }
 
-int checkMove(char c, PLAYER (*ppp)[]) {
+void checkMove(char c, PLAYER (*ppp)[]) {
 	int i, j;
 	for (i = 0; i < numOfPlayers; i++) {
 		for (j = 0; j < 4; j++) {
 			if ((*ppp)[i].dir[j] == c) {
 				movePlayer(ppp, i, j);
-				return 0;
+				return;
 			}
 		}
 	}
 }
 
-int movePlayer(PLAYER (*ppp)[], int i, int dir) {
+void movePlayer(PLAYER (*ppp)[], int i, int dir) {
 	PLAYER *p = &(*ppp)[i];
 	POSITION oldPosition = (*p).obj.pos;
 	POSITION newPosition = getNewPosition(oldPosition, dir);
@@ -274,7 +273,7 @@ int isPositionValid(POSITION pos, int dir) {
 	return 0;
 }
 
-int saveMove(PLAYER *p, int dir) {
+void saveMove(PLAYER *p, int dir) {
 	MOVE m;
 	m.dir = dir;
 	m.time = clock();
@@ -311,22 +310,22 @@ POSITION getNewPosition(POSITION pos, int dir) {
 	 //// print ////
 	///////////////
 
-int printAllPlayers(PLAYER (*ppp)[]) {
+void printAllPlayers(PLAYER (*ppp)[]) {
 	int i;
 	for (i = 0; i < numOfPlayers; i++) {
 		printPlayer(&((*ppp)[i])); 
 	}
 }
 
-int printPlayer(PLAYER *p) {
+void printPlayer(PLAYER *p) {
 	printCharXY((*p).obj.c, (*p).obj.pos.x, (*p).obj.pos.y);
 }
 
-int erasePlayer(PLAYER *p) {
+void erasePlayer(PLAYER *p) {
 	printCharXY(' ', (*p).obj.pos.x, (*p).obj.pos.y);
 }
 
-int printChar(int c, POSITION pos) {
+void printChar(int c, POSITION pos) {
 	printCharXY(c, pos.x, pos.y);
 }
 

@@ -9,6 +9,11 @@
 
 void sigWinChCatcher(int signum);
 void registerSigWinChCatcher();
+void updateConsoleSize();
+int coordinatesOutOfBounds(int x, int y);
+int getAbsoluteY(int y);
+int getAbsoluteX(int x);
+
 
 int columns = TRACK_WIDTH;
 int rows = TRACK_HEIGHT;
@@ -17,20 +22,20 @@ int rows = TRACK_HEIGHT;
 
 ///////// PUBLIC ////////////
 
-int setOutput() {
+void setOutput() {
 	registerSigWinChCatcher();
 	updateConsoleSize();
 }
 
 /////////////////////////
 
-int printCharXY(char c, int x, int y) {
+void printCharXY(char c, int x, int y) {
 	if (coordinatesOutOfBounds(x, y))
 		return;
 	printf("\033[%d;%dH%c", getAbsoluteY(y), getAbsoluteX(x), c);  	
 }
 
-int printString(const char s[], int x, int y) {
+void printString(const char s[], int x, int y) {
 	if (coordinatesOutOfBounds(x, y))
 		return;
 	int itDoesntFitTheScreen = strlen(s) + x > columns;
@@ -70,7 +75,7 @@ int coordinatesOutOfBounds(int x, int y) {
 
 ////////// DRAW ///////////
 
-int printTrack() {
+void printTrack() {
 	updateConsoleSize();
 	int i;
 	int height;
@@ -89,15 +94,15 @@ int printTrack() {
 	fflush(stdout);
 }
 
-int clearScreen(void) {
+void clearScreen(void) {
 	printf("\e[1;1H\e[2J");
 }
 
-int printObject(OBJECT *obj, int i) {
+void printObject(OBJECT *obj, int i) {
 	printCharXY((*obj).c, (*obj).pos.x, (*obj).pos.y);
 }
 
-int printObjects(OBJECT * ooo, int noOfObj) {
+void printObjects(OBJECT * ooo, int noOfObj) {
 	int i;
 	for (i = 0; i < noOfObj; i++) {
 		printObject((ooo+i), i);
@@ -132,7 +137,7 @@ void sigWinChCatcher(int signum) {
 	redrawScreen();
 }
 
-int updateConsoleSize() {
+void updateConsoleSize() {
 	struct winsize w;
 	ioctl(0, TIOCGWINSZ, &w);
 	columns = w.ws_col;
