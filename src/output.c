@@ -1,19 +1,30 @@
 #include <stdio.h>
 #include <sys/ioctl.h>
 #include <signal.h>
+#include <string.h>
 
 #include "graphics.h"
 #include "term.h"
 #include "util.h"
 #include "scoreboard.h"
 
-void sigWinChCatcher(int signum);
-void registerSigWinChCatcher();
-void updateConsoleSize();
-int coordinatesOutOfBounds(int x, int y);
-int getAbsoluteY(int y);
+void setOutput(void);
+void printCharXY(char c, int x, int y);
+void printString(char const s[], int x, int y);
 int getAbsoluteX(int x);
+int getAbsoluteY(int y);
+int getAbsoluteCoordinate(int value, int console, int track);
+int coordinatesOutOfBounds(int x, int y);
+void printTrack(void);
+void clearScreen(void);
+void printObject(OBJECT *obj, int i);
+void printObjects(OBJECT *ooo, int noOfObj);
+void redrawScreen(void);
+void registerSigWinChCatcher(void);
+void sigWinChCatcher(int signum);
+void updateConsoleSize(void);
 
+/////////////////////////////
 
 int columns = TRACK_WIDTH;
 int rows = TRACK_HEIGHT;
@@ -35,7 +46,7 @@ void printCharXY(char c, int x, int y) {
 	printf("\033[%d;%dH%c", getAbsoluteY(y), getAbsoluteX(x), c);  	
 }
 
-void printString(const char s[], int x, int y) {
+void printString(char const s[], int x, int y) {
 	if (coordinatesOutOfBounds(x, y))
 		return;
 	int itDoesntFitTheScreen = strlen(s) + x > columns;

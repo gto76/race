@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "environment.h"
 #include "graphics.h"
@@ -44,18 +45,31 @@ typedef struct player PLAYER;
 
 ////////////////////////////
 
-void checkMove(char c, PLAYER (*p)[]);
 int main(void);
-//void clearScreen(void);
+OBJECT *getAllObjects(void);
+int getNumberOfObjects(void);
+void initPlayers(void);
+void splashScreen(void);
+void waitForEnter(void);
+void setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left);
+void setStartTime(PLAYER (*ppp)[]);
+void countdown(void);
+void deepSleep1(void);
+void clearInputBuffer(void);
+int areAllFinished(PLAYER (*ppp)[]);
+int weHaveAWinner(PLAYER (*ppp)[]);
+void results(PLAYER (*ppp)[]);
+void checkMove(char c, PLAYER (*ppp)[]);
+void movePlayer(PLAYER (*ppp)[], int i, int dir);
+int isPositionValid(POSITION pos, int dir);
+void saveMove(PLAYER *p, int dir);
+int crossedTheLine(POSITION pos, int dir);
+int getSymbolOnTheTrack(POSITION pos);
+POSITION getNewPosition(POSITION pos, int dir);
+void printAllPlayers(PLAYER (*ppp)[]);
 void printPlayer(PLAYER *p);
 void erasePlayer(PLAYER *p);
-int isPositionValid(POSITION pos, int dir);
-void movePlayer(PLAYER (*p)[], int i, int dir);
-POSITION getNewPosition(POSITION pos, int dir);
-void setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left);
-
-
-//void setDistance(int (*paths)[][TRACK_WIDTH+1], int x, int y, int distance);
+void printChar(int c, POSITION pos);
 
 ////////////////////////////
 
@@ -72,7 +86,6 @@ int main(void) {
 	setEnvironment();
 	setOutput();
 	setScoreboard();
-
 
 	while(1) {
 		setRaceMode();

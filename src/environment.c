@@ -5,20 +5,18 @@
 #include <signal.h>
 #include <sys/ioctl.h>
 
-//#include "term.h" 
-
-void setEnvironment();
-void checkTerminal();
-void saveAttributes();
-void setMenuMode();
-void setRaceMode(); 
+void setEnvironment(void);
+void checkTerminal(void);
+void saveAttributes(void);
+void setMenuMode(void);
+void setRaceMode(void);
 void setNoncanonicalMode(int vmin, int vtime);
-void registerSigIntCatcher();
+void registerSigIntCatcher(void);
 void sigIntCatcher(int signum);
-void disableRepeatAndCursor();
-void resetEnvironment();
-void resetInputMode();
-void enableRepeatAndCursor();
+void disableRepeatAndCursor(void);
+void resetEnvironment(void);
+void resetInputMode(void);
+void enableRepeatAndCursor(void);
 
 //////////////////////////////
 
