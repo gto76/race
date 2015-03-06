@@ -104,7 +104,6 @@ void sb_printStringAndWriteToBuffer(char const s[], int x , int y) {
 }
 
 void sb_printString(char const s[], int x , int y) {
-//	printf("\033[%d;%dH%s\n", y+1+SB_LOCATION_Y, x+1+SB_LOCATION_X, s);  	
 	printString(s, x+SB_LOCATION_X, y+SB_LOCATION_Y);
 }
 

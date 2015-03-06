@@ -90,11 +90,10 @@ int main(void) {
 	while(1) {
 		setRaceMode();
 		PLAYER ppp[numOfPlayers];
-		setPlayer(&ppp, 0, 40, 18, '1', 65, 66, 67, 68); 
+		setPlayer(&ppp, 0, 40, 18, '1', 65, 66, 67, 68);
 		setPlayer(&ppp, 1, 40, 20, '2', 119, 115, 100, 97);
 		players = &ppp;
 
-		initPlayers();
 		redrawScreen();
 		splashScreen();
 		countdown();
@@ -127,13 +126,6 @@ int getNumberOfObjects() {
 }
 
 ////////////////////////////
-
-void initPlayers() {
-	PLAYER ppp[numOfPlayers];
-	setPlayer(&ppp, 0, 40, 18, '1', 65, 66, 67, 68); 
-	setPlayer(&ppp, 1, 40, 20, '2', 119, 115, 100, 97);
-	players = &ppp;
-}
 
 void splashScreen() {
 	int x = 2, y = 0;
