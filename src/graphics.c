@@ -1,6 +1,6 @@
 #define NULL 0
 
-char const *track[] = {
+char const *track[25] = {
 	"################################################################################",
 	"#                                                                              #",
 	"#                                                                              #",
@@ -28,7 +28,7 @@ char const *track[] = {
 	NULL
 };
 
-char const *race[] = {
+char const *race[6] = {
 	" ____                ",
 	"|  _ \\ __ _  ___ ___ ",
 	"| |_) / _` |/ __/ _ \\",
@@ -37,7 +37,7 @@ char const *race[] = {
 	NULL
 };
 
-char const *three[] = {
+char const *three[6] = {
 	" _____ ",
 	"|___ / ",
 	"  |_ \\ ",
@@ -46,7 +46,7 @@ char const *three[] = {
 	NULL
 };
 
-char const *two[] = {
+char const *two[6] = {
 	" ____  ",
 	"|___ \\ ",
 	"  __) |",
@@ -55,7 +55,7 @@ char const *two[] = {
 	NULL
 };
 
-char const *one[] = {
+char const *one[6] = {
 	"   _   ",
 	"  / |  ",
 	"  | |  ",
@@ -64,7 +64,7 @@ char const *one[] = {
 	NULL
 };
 
-char const *go[] = {
+char const *go[6] = {
 	"  ____       _  _  _ ",
 	" / ___| ___ | || || |",
 	"| |  _ / _ \\| || || |",

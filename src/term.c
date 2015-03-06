@@ -46,7 +46,7 @@ typedef struct player PLAYER;
 
 void checkMove(char c, PLAYER (*p)[]);
 int main(void);
-void clearScreen(void);
+//void clearScreen(void);
 void printPlayer(PLAYER *p);
 void erasePlayer(PLAYER *p);
 int isPositionValid(POSITION pos, int dir);
@@ -55,7 +55,7 @@ POSITION getNewPosition(POSITION pos, int dir);
 void setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, int right, int left);
 
 
-void setDistance(int (*paths)[][TRACK_WIDTH+1], int x, int y, int distance);
+//void setDistance(int (*paths)[][TRACK_WIDTH+1], int x, int y, int distance);
 
 ////////////////////////////
 
@@ -163,7 +163,6 @@ void setStartTime(PLAYER (*ppp)[]) {
 }
 
 void countdown() {
-	int sec = 1;
 	int x = 10, y = 0;
 	fflush(stdout);
 	eraseScoreboard();

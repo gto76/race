@@ -8,7 +8,7 @@
 
 void sb_printChar(char c, int x, int y); 
 void sb_printString(char s[], int x , int y);
-void sb_printString_noBuff(char s[], int x , int y);
+//void sb_printString_noBuff(char s[], int x , int y);
 
 static char buffer[SB_HEIGHT][SB_WIDTH];
 
@@ -65,7 +65,7 @@ void printCharOnBoardXY(char c, int x, int y) {
 ///////////////////
 
 void printScoreboardBuffer() {
-	int i, j;
+	int i;
 	for (i = 0; i < SB_HEIGHT; i++) {
 		sb_printString(buffer[i], 0, i);
 	}
