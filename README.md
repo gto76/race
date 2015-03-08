@@ -19,6 +19,7 @@ mkdir cygwin
 setup-x86_64.exe --quiet-mode --no-shortcuts --site http://cygwin.mirror.constant.com --root %cd%\cygwin -P git -P gcc-core -P libgcc1 -P libclang-devel -B
 cygwin\Cygwin.bat
 ```
+
 * Once in Cygwin, run the UNIX commands to start the game
 
 #### UNIX
