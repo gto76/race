@@ -70,6 +70,8 @@ void printAllPlayers(PLAYER (*ppp)[]);
 void printPlayer(PLAYER *p);
 void erasePlayer(PLAYER *p);
 void printChar(int c, POSITION pos);
+void checkeredFlag(void);
+void drawFlagAndWait(char const *flag[7], int x, int y, int centiSeconds);
 
 ////////////////////////////
 
@@ -79,6 +81,13 @@ int const numOfPlayers = 2;
 ////////////////////////////
 
 PLAYER (*players)[];
+
+int noOfWinsP1 = 0;
+int noOfWinsP2 = 0;
+
+////////////////////////////
+
+int const STARTING_POSITION_X = 35; //= 40
 
 ////////// MAIN ///////////
 
@@ -90,8 +99,8 @@ int main(void) {
 	while(1) {
 		setRaceMode();
 		PLAYER ppp[numOfPlayers];
-		setPlayer(&ppp, 0, 40, 18, '1', 65, 66, 67, 68);
-		setPlayer(&ppp, 1, 40, 20, '2', 119, 115, 100, 97);
+		setPlayer(&ppp, 0, STARTING_POSITION_X, 18, '1', 65, 66, 67, 68);
+		setPlayer(&ppp, 1, STARTING_POSITION_X, 20, '2', 119, 115, 100, 97);
 		players = &ppp;
 
 		redrawScreen();
@@ -104,6 +113,8 @@ int main(void) {
 			c = getc(stdin);
 			checkMove(c, &ppp);
 		}
+		printWins();
+		checkeredFlag();
 		waitForEnter();
 	}
 
@@ -121,6 +132,14 @@ OBJECT * getAllObjects() {
 	return ooo;
 }
 
+int getNoOfWinsP1() {
+	return noOfWinsP1;
+}
+
+int getNoOfWinsP2() {
+	return noOfWinsP2;
+}
+
 int getNumberOfObjects() {
 	return numOfPlayers;
 }
@@ -128,9 +147,10 @@ int getNumberOfObjects() {
 ////////////////////////////
 
 void splashScreen() {
-	int x = 2, y = 0;
+	int x = 1, y = 0;
 	eraseScoreboard();
 	printMatrixOnBoardXY(race, x, y);
+	printStringOnBoardXY(" - Press Enter - ", 5, 5);
 	waitForEnter();
 }
 
@@ -208,10 +228,38 @@ int weHaveAWinner(PLAYER (*ppp)[]) {
 	int i;
 	for (i = 0; i < numOfPlayers; i++) {
 		if (((*ppp)[i]).finished == 1) {
+			if (((*ppp)[i]).obj.c == '1') {
+				noOfWinsP1++;
+			} else if (((*ppp)[i]).obj.c == '2') {
+				noOfWinsP2++;
+			}
 			return 1;
 		}
 	}
 	return 0;
+}
+
+void checkeredFlag() {
+	int y = 0;
+	int const REPEATS = 1;
+	for (int i = 0; i < REPEATS; i++) {
+
+		drawFlagAndWait(flag[0], 5, y, 30);
+		drawFlagAndWait(flag[6], 4, y, 30);
+		drawFlagAndWait(flag[0], 3, y, 10);
+
+		//drawFlagAndWait(flag[0], 3, y, 10);
+		//drawFlagAndWait(flag[6], 3, y, 20);
+		//drawFlagAndWait(flag[0], 3, y, 10);
+		//drawFlagAndWait(flag[6], 3, y, 30);
+		//drawFlagAndWait(flag[3], 3, y, 10);
+	}
+}
+
+void drawFlagAndWait(char const *flag[7], int x, int y, int centiSeconds) {
+	eraseScoreboard();
+	printMatrixOnBoardXY(flag, x, y);
+	usleep(centiSeconds*10000);	
 }
 
 void results(PLAYER (*ppp)[]) {

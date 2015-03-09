@@ -23,6 +23,7 @@ void redrawScreen(void);
 void registerSigWinChCatcher(void);
 void sigWinChCatcher(int signum);
 void updateConsoleSize(void);
+void printWins(void);
 
 /////////////////////////////
 
@@ -120,6 +121,13 @@ void printObjects(OBJECT * ooo, int noOfObj) {
 	}
 }
 
+void printWins() {
+	int wp1 = getNoOfWinsP1() % 10;
+	printCharXY(wp1+48, 57, 12);
+	int wp2 = getNoOfWinsP2() % 10;
+	printCharXY(wp2+48, 22, 12);
+}
+
 void redrawScreen() {
 	updateConsoleSize();
 	clearScreen();
@@ -129,6 +137,7 @@ void redrawScreen() {
 	ooo = getAllObjects();
 	printObjects(ooo, noOfObj);
 	printScoreboardBuffer();
+	printWins();
 	fflush(stdout);
 }
 
