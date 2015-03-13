@@ -1,3 +1,0 @@
-#!/bin/bash
-
-gcc -o a.out src/*.c -Wall -std=gnu11 -O3
