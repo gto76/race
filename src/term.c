@@ -12,8 +12,9 @@
 
 ////////////////////////////
 
+// imported from term.h:
+
 /*
-// term.h:
 struct position {
 	int x, y;
 };
@@ -40,7 +41,6 @@ struct player {
 	int finished; 
 	MOVE mmm[1000]; // move log
 	int lastMove;
-	clock_t lastKeyPress;
 };
 typedef struct player PLAYER;
 
@@ -177,7 +177,6 @@ void setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, i
 	(*p).dir[3] = left;
 	(*p).finished = 0; 
 	(*p).lastMove = 0;
-	(*p).lastKeyPress = 0; 
 }
 
 void setStartTime(PLAYER (*ppp)[]) {
@@ -247,16 +246,9 @@ void checkeredFlag() {
 	int y = 0;
 	int const REPEATS = 1;
 	for (int i = 0; i < REPEATS; i++) {
-
 		drawFlagAndWait(flag[0], 5, y, 30);
 		drawFlagAndWait(flag[6], 4, y, 30);
 		drawFlagAndWait(flag[0], 3, y, 10);
-
-		//drawFlagAndWait(flag[0], 3, y, 10);
-		//drawFlagAndWait(flag[6], 3, y, 20);
-		//drawFlagAndWait(flag[0], 3, y, 10);
-		//drawFlagAndWait(flag[6], 3, y, 30);
-		//drawFlagAndWait(flag[3], 3, y, 10);
 	}
 }
 
@@ -294,9 +286,10 @@ void checkMove(char c, PLAYER (*ppp)[]) {
 
 void movePlayer(PLAYER (*ppp)[], int i, int dir) {
 	PLAYER *p = &(*ppp)[i];
-	//if (moveHappenedTooFast(p)) {
-	//	return;
-	//}
+	// Deny any moves in first few moments. Trying to prevent early start in cygwin.
+	if (moveHappenedTooFast(p)) {
+		return;
+	}
 	POSITION oldPosition = (*p).obj.pos;
 	POSITION newPosition = getNewPosition(oldPosition, dir);
 	if (isPositionValid(newPosition, dir)) {
@@ -324,8 +317,8 @@ void movePlayer(PLAYER (*ppp)[], int i, int dir) {
 
 int moveHappenedTooFast(PLAYER *p) {
 	clock_t now = clock();
-	clock_t deltaTime = now - (*p).lastKeyPress;
-	(*p).lastKeyPress = now;
+	clock_t start = (*p).mmm[0].time;
+	clock_t deltaTime = now - start;
 	return deltaTime < DENY_MOVES_FASTER_THAN;
 }
 
