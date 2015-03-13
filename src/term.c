@@ -40,6 +40,7 @@ struct player {
 	int finished; 
 	MOVE mmm[1000]; // move log
 	int lastMove;
+	clock_t lastKeyPress;
 };
 typedef struct player PLAYER;
 
@@ -61,6 +62,7 @@ int weHaveAWinner(PLAYER (*ppp)[]);
 void results(PLAYER (*ppp)[]);
 void checkMove(char c, PLAYER (*ppp)[]);
 void movePlayer(PLAYER (*ppp)[], int i, int dir);
+int moveHappenedTooFast(PLAYER *p);
 int isPositionValid(POSITION pos, int dir);
 void saveMove(PLAYER *p, int dir);
 int crossedTheLine(POSITION pos, int dir);
@@ -87,7 +89,8 @@ int noOfWinsP2 = 0;
 
 ////////////////////////////
 
-int const STARTING_POSITION_X = 35; //= 40
+int const STARTING_POSITION_X = 40;
+int const DENY_MOVES_FASTER_THAN = 90;
 
 ////////// MAIN ///////////
 
@@ -173,7 +176,8 @@ void setPlayer(PLAYER (*ppp)[], int i, int x, int y, char c, int up, int down, i
 	(*p).dir[2] = right;
 	(*p).dir[3] = left;
 	(*p).finished = 0; 
-	(*p).lastMove = 0; 
+	(*p).lastMove = 0;
+	(*p).lastKeyPress = 0; 
 }
 
 void setStartTime(PLAYER (*ppp)[]) {
@@ -290,6 +294,9 @@ void checkMove(char c, PLAYER (*ppp)[]) {
 
 void movePlayer(PLAYER (*ppp)[], int i, int dir) {
 	PLAYER *p = &(*ppp)[i];
+	//if (moveHappenedTooFast(p)) {
+	//	return;
+	//}
 	POSITION oldPosition = (*p).obj.pos;
 	POSITION newPosition = getNewPosition(oldPosition, dir);
 	if (isPositionValid(newPosition, dir)) {
@@ -313,6 +320,13 @@ void movePlayer(PLAYER (*ppp)[], int i, int dir) {
 		// so that it if two are on the same spot the last that arrived gets printed:
 		printPlayer(p); 
 	}
+}
+
+int moveHappenedTooFast(PLAYER *p) {
+	clock_t now = clock();
+	clock_t deltaTime = now - (*p).lastKeyPress;
+	(*p).lastKeyPress = now;
+	return deltaTime < DENY_MOVES_FASTER_THAN;
 }
 
 int isPositionValid(POSITION pos, int dir) {
