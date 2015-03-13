@@ -286,10 +286,6 @@ void checkMove(char c, PLAYER (*ppp)[]) {
 
 void movePlayer(PLAYER (*ppp)[], int i, int dir) {
 	PLAYER *p = &(*ppp)[i];
-	// Deny any moves in first few moments. Trying to prevent early start in cygwin.
-	if (moveHappenedTooFast(p)) {
-		return;
-	}
 	POSITION oldPosition = (*p).obj.pos;
 	POSITION newPosition = getNewPosition(oldPosition, dir);
 	if (isPositionValid(newPosition, dir)) {
@@ -313,13 +309,6 @@ void movePlayer(PLAYER (*ppp)[], int i, int dir) {
 		// so that it if two are on the same spot the last that arrived gets printed:
 		printPlayer(p); 
 	}
-}
-
-int moveHappenedTooFast(PLAYER *p) {
-	clock_t now = clock();
-	clock_t start = (*p).mmm[0].time;
-	clock_t deltaTime = now - start;
-	return deltaTime < DENY_MOVES_FASTER_THAN;
 }
 
 int isPositionValid(POSITION pos, int dir) {

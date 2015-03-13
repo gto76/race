@@ -1,5 +1,8 @@
 a.out
+race
 *.swp
+.cproject
+.project
 
 # Object files
 *.o
