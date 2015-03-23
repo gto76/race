@@ -25,7 +25,7 @@ cygwin\Cygwin.bat
 * Once in Cygwin, run the UNIX commands to start the game
 
 ### UNIX
-```
+```bash
 git clone https://github.com/gto76/race.git
 cd race
 ./run
