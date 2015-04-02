@@ -4,9 +4,10 @@ Race!
 
 ![screenshot](doc/screenshot-01.png)
 
-### How to run:
+How to run
+----------
 
-#### Windows
+### Windows
 
 * Download and install [wget](http://sourceforge.net/projects/gnuwin32/files/wget/1.11.4-1/wget-1.11.4-1-setup.exe/download)
 * Open command prompt
@@ -23,8 +24,8 @@ cygwin\Cygwin.bat
 
 * Once in Cygwin, run the UNIX commands to start the game
 
-#### UNIX
-```
+### UNIX
+```bash
 git clone https://github.com/gto76/race.git
 cd race
 ./run
