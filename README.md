@@ -13,7 +13,7 @@ How to run on…
 * Run the *UNIX* commands.
 
 ### UNIX
-```bash
+```
 git clone https://github.com/gto76/race.git
 cd race
 ./run
