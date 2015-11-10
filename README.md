@@ -14,9 +14,9 @@ How to run on…
 
 ### UNIX
 ```
-git clone https://github.com/gto76/race.git
-cd race
-./run
+$ git clone https://github.com/gto76/race.git
+$ cd race
+$ ./run
 ```
 
 
