@@ -1,6 +1,7 @@
 Race!
 =====
-`3,2,1... Go!!!`
+
+#### 3, 2, 1... Go!!!
 
 ![screenshot](doc/screenshot-01.png)
 
